@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "UTN FRCon – Campus Redesign",
+  "version": "1.0.0",
+  "description": "Rediseño visual moderno del campus virtual de UTN Facultad Regional Concordia (frcon.cvg.utn.edu.ar)",
+  "permissions": [],
+  "content_scripts": [
+    {
+      "matches": ["*://frcon.cvg.utn.edu.ar/*"],
+      "css": ["styles/main.css"],
+      "js": ["scripts/inject.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["styles/*", "scripts/*", "icons/*"],
+      "matches": ["*://frcon.cvg.utn.edu.ar/*"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "UTN Campus Redesign"
+  }
+}
