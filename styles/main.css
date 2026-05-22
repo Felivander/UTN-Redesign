@@ -7,17 +7,17 @@
 
 /* ══ DARK TOKENS ════════════════════════════════════════ */
 :root {
-  --bg:       #111214;
-  --surface:  #17181c;
-  --card:     #1c1d22;
-  --card-h:   #212328;
-  --border:   #2c2d33;
-  --border-h: #44464f;
-  --text:     #e4e4e8;
-  --sub:      #9b9ca8;
-  --muted:    #5e5f6b;
-  --accent:   #6b7cff;
-  --accent-s: rgba(107,124,255,.12);
+  --bg:       #09090b; /* zinc-950 */
+  --surface:  #18181b; /* zinc-900 */
+  --card:     #18181b; /* zinc-900 */
+  --card-h:   #27272a; /* zinc-800 */
+  --border:   #27272a; /* zinc-800 */
+  --border-h: #3f3f46; /* zinc-700 */
+  --text:     #fafafa; /* zinc-50 */
+  --sub:      #a1a1aa; /* zinc-400 */
+  --muted:    #52525b; /* zinc-600 */
+  --accent:   #fafafa; /* solid white */
+  --accent-s: rgba(255, 255, 255, 0.08);
   --green:    #3ecf8e;
   --r-sm:     6px;
   --r-md:     10px;
@@ -28,18 +28,18 @@
 }
 
 /* ══ LIGHT TOKENS ═══════════════════════════════════════ */
-body.nh-light {
-  --bg:       #f4f4f5;
-  --surface:  #ffffff;
-  --card:     #ffffff;
-  --card-h:   #f9f9fa;
-  --border:   #e4e4e7;
-  --border-h: #c4c4ca;
-  --text:     #18181b;
-  --sub:      #52525b;
-  --muted:    #a1a1aa;
-  --accent:   #4f5bdb;
-  --accent-s: rgba(79,91,219,.08);
+:root.nh-light, body.nh-light {
+  --bg:       #fafafa; /* zinc-50 */
+  --surface:  #ffffff; /* white */
+  --card:     #ffffff; /* white */
+  --card-h:   #f4f4f5; /* zinc-100 */
+  --border:   #e4e4e7; /* zinc-200 */
+  --border-h: #d4d4d8; /* zinc-300 */
+  --text:     #09090b; /* zinc-950 */
+  --sub:      #71717a; /* zinc-500 */
+  --muted:    #a1a1aa; /* zinc-400 */
+  --accent:   #18181b; /* zinc-900 */
+  --accent-s: rgba(0, 0, 0, 0.06);
   --green:    #10a66e;
   --shadow:   0 1px 6px rgba(0,0,0,.10);
 }
@@ -126,10 +126,24 @@ body.pagelayout-frontpage .block_online_users {
 
 body.pagelayout-frontpage #page-wrapper,
 body.pagelayout-frontpage #page,
-body.pagelayout-frontpage #page-content {
-  padding: 0 !important;
+body.pagelayout-frontpage #page-content,
+body.pagelayout-frontpage #page.drawers,
+body.pagelayout-frontpage .drawers,
+body.pagelayout-frontpage .navbar,
+body.pagelayout-frontpage #page-header,
+body.pagelayout-frontpage #adaptable-page-header-wrapper,
+body.pagelayout-frontpage .drawer-toggles,
+body.pagelayout-frontpage .drawer,
+body.pagelayout-frontpage #nav-drawer {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
   margin: 0 !important;
-  max-width: none !important;
+  padding: 0 !important;
 }
 
 /* ══ HEADER (nuestro, custom) ═══════════════════════════ */
@@ -138,11 +152,11 @@ body.pagelayout-frontpage #page-content {
   top: 0; left: 0; right: 0;
   height: var(--header-h) !important;
   background: var(--surface) !important;
-  border-bottom: 1px solid var(--border) !important;
+  border-bottom: none !important;
   z-index: 9999 !important;
   display: flex !important;
   align-items: center !important;
-  transition: background .2s ease, border-color .2s ease !important;
+  transition: background .2s ease !important;
 }
 #nhood-header .nh-inner {
   width: 100%; max-width: 1280px;
@@ -154,7 +168,7 @@ body.pagelayout-frontpage #page-content {
   text-decoration: none !important; flex-shrink: 0;
 }
 .nh-logo img { height: 30px; width: auto; }
-body:not(.nh-light) .nh-logo img { filter: brightness(1.2); }
+body:not(.nh-light) .nh-logo img { filter: invert(1) brightness(2) !important; }
 .nh-site-name {
   font-size: 13px; font-weight: 600;
   color: var(--sub) !important; letter-spacing: .01em;
@@ -196,6 +210,42 @@ body:not(.nh-light) .nh-logo img { filter: brightness(1.2); }
   background: var(--card-h) !important;
 }
 
+/* Ensure all injected Lucide SVG icons and child elements render correctly and resist Moodle overrides */
+svg.lucide,
+#nh-theme-toggle svg,
+#nl-theme-toggle svg,
+.nl-theme-btn svg,
+svg.lucide path,
+svg.lucide circle,
+svg.lucide rect,
+svg.lucide line,
+svg.lucide polyline,
+svg.lucide polygon,
+#nh-theme-toggle svg *,
+#nl-theme-toggle svg *,
+.nl-theme-btn svg * {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2px !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Specific styling for the theme togglers */
+#nh-theme-toggle svg,
+.nl-theme-btn svg,
+#nl-theme-toggle svg {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  display: block !important;
+}
+
 /* Nav links (logged in) */
 .nh-nav-link {
   font-size: 13px; font-weight: 500; color: var(--sub) !important;
@@ -218,9 +268,10 @@ body:not(.nh-light) .nh-logo img { filter: brightness(1.2); }
 .nh-user-pill:hover { border-color: var(--border-h) !important; background: var(--card-h) !important; }
 .nh-avatar {
   width: 28px; height: 28px; border-radius: 50%;
-  background: var(--accent); display: flex; align-items: center;
-  justify-content: center; font-size: 12px; font-weight: 700;
-  color: #fff; flex-shrink: 0; overflow: hidden;
+  background: var(--border-h) !important; display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 600;
+  color: var(--text) !important; flex-shrink: 0; overflow: hidden;
+  border: 1px solid var(--border) !important;
 }
 .nh-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .nh-username { font-size: 13px; font-weight: 600; color: var(--text) !important; }
@@ -239,7 +290,7 @@ body:not(.nh-light) .nh-logo img { filter: brightness(1.2); }
 /* ══ HERO (solo front page, no logueado) ════════════════ */
 #nhood-hero {
   background: var(--surface) !important;
-  border-bottom: 1px solid var(--border) !important;
+  border-bottom: none !important;
   padding: 48px 24px 44px !important;
 }
 #nhood-hero .hero-inner {
@@ -305,7 +356,7 @@ body:not(.nh-light) .nh-logo img { filter: brightness(1.2); }
 .hl-field input::placeholder { color: var(--muted) !important; }
 .hl-submit {
   width: 100%; background: var(--accent) !important; border: none !important;
-  border-radius: var(--r-sm) !important; color: #fff !important;
+  border-radius: var(--r-sm) !important; color: var(--bg) !important;
   font-family: var(--font) !important; font-size: 13px !important;
   font-weight: 600 !important; padding: 10px !important; cursor: pointer !important;
   margin-top: 4px !important; transition: var(--t) !important;
@@ -318,7 +369,7 @@ body:not(.nh-light) .nh-logo img { filter: brightness(1.2); }
 /* ══ WELCOME BANNER (front page, logueado) ══════════════ */
 #nhood-welcome {
   background: var(--surface) !important;
-  border-bottom: 1px solid var(--border) !important;
+  border-bottom: none !important;
   padding: 32px 24px !important;
 }
 #nhood-welcome .nw-inner {
@@ -342,10 +393,10 @@ body:not(.nh-light) .nh-logo img { filter: brightness(1.2); }
   white-space: nowrap; border: 1px solid var(--border);
 }
 .nw-btn-primary {
-  background: var(--accent) !important; color: #fff !important;
+  background: var(--accent) !important; color: var(--bg) !important;
   border-color: var(--accent) !important;
 }
-.nw-btn-primary:hover { opacity: .88 !important; color: #fff !important; }
+.nw-btn-primary:hover { opacity: .88 !important; color: var(--bg) !important; }
 .nw-btn-secondary {
   background: var(--card) !important; color: var(--text) !important;
 }
@@ -359,7 +410,7 @@ body:not(.nh-light) .nh-logo img { filter: brightness(1.2); }
 }
 .nc-header {
   display: flex; align-items: baseline; gap: 12px;
-  margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  margin-bottom: 20px; padding-bottom: 16px; border-bottom: none !important;
 }
 .nc-header h2 { font-size: 16px !important; font-weight: 600 !important; margin: 0 !important; color: var(--text) !important; letter-spacing: -.01em !important; }
 .nc-header .nc-count { font-size: 12px; color: var(--muted); font-weight: 500; }
@@ -379,7 +430,9 @@ body:not(.nh-light) .nh-logo img { filter: brightness(1.2); }
   box-shadow: var(--shadow) !important; color: var(--text) !important;
 }
 @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.nc-icon { font-size: 22px !important; line-height: 1 !important; display: block !important; margin-bottom: 2px !important; }
+.nc-icon { display: block !important; margin-bottom: 2px !important; }
+.nc-icon svg { width: 22px; height: 22px; stroke-width: 1.8; color: var(--sub); transition: var(--t); }
+.nc-card:hover .nc-icon svg { color: var(--accent); }
 .nc-title { font-size: 13px !important; font-weight: 600 !important; color: var(--text) !important; line-height: 1.35 !important; }
 .nc-sub {
   display: flex !important; align-items: center !important; justify-content: space-between !important;
@@ -488,7 +541,7 @@ body:not(.pagelayout-frontpage) tr:hover td { background: rgba(255,255,255,.03) 
 
 /* Formularios en páginas internas */
 body:not(.pagelayout-frontpage) .form-control,
-body:not(.pagelayout-frontpage) input:not([type=submit]):not([type=button]),
+body:not(.pagelayout-frontpage) input:not([type=submit]):not([type=button]):not([type=checkbox]):not([type=radio]),
 body:not(.pagelayout-frontpage) textarea,
 body:not(.pagelayout-frontpage) select {
   background: var(--card) !important; border: 1px solid var(--border) !important;
@@ -498,10 +551,16 @@ body:not(.pagelayout-frontpage) select {
 body:not(.pagelayout-frontpage) .form-control:focus,
 body:not(.pagelayout-frontpage) input:focus { border-color: var(--accent) !important; outline: none !important; }
 
+body:not(.pagelayout-frontpage) input[type="checkbox"],
+body:not(.pagelayout-frontpage) input[type="radio"] {
+  accent-color: var(--accent) !important;
+  cursor: pointer !important;
+}
+
 /* Botones de Moodle en páginas internas */
 body:not(.pagelayout-frontpage) .btn-primary {
   background: var(--accent) !important; border-color: var(--accent) !important;
-  color: #fff !important; font-family: var(--font) !important; border-radius: var(--r-sm) !important;
+  color: var(--bg) !important; font-family: var(--font) !important; border-radius: var(--r-sm) !important;
 }
 body:not(.pagelayout-frontpage) .btn-secondary,
 body:not(.pagelayout-frontpage) .btn-default {
@@ -913,51 +972,389 @@ body:not(.pagelayout-frontpage) .paging a:hover {
 }
 
 /* ══ MY COURSES / DASHBOARD OVERRIDES (/my/courses.php) ══ */
-body.pagelayout-mycourses [data-region="courses-view"] {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)) !important;
-  gap: 16px !important;
-  margin-top: 20px !important;
+
+/* Reclaim space: Dissolve redundant native Moodle wrappers, borders and block headers */
+body.pagelayout-mycourses .block_myoverview,
+body.pagelayout-mycourses .block_myoverview.card,
+body.pagelayout-mycourses .block.card {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body.pagelayout-mycourses .block_myoverview .card-body,
+body.pagelayout-mycourses .block_myoverview.card .card-body,
+body.pagelayout-mycourses .block.card .card-body {
   padding: 0 !important;
 }
 
-body.pagelayout-mycourses .course-card {
+body.pagelayout-mycourses .block_myoverview .block-header,
+body.pagelayout-mycourses .block_myoverview .card-header,
+body.pagelayout-mycourses .block_myoverview h5.card-title,
+body.pagelayout-mycourses .block_myoverview [id^="instance-"][id$="-header"] {
+  display: none !important; /* Removes redundant grey header title completely */
+}
+
+/* Page layout adjustments */
+body.pagelayout-mycourses #page-content {
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: 30px 24px !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+body.pagelayout-mycourses #region-main {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Page title and headers */
+body.pagelayout-mycourses .page-header {
+  margin-bottom: 24px !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+body.pagelayout-mycourses .page-header h1 {
+  font-family: 'Outfit', var(--font) !important;
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--text) !important;
+}
+
+/* Modern Segmented Tab Controls (shadcn/ui Tabs Style) */
+body.pagelayout-mycourses .nav-pills,
+body.pagelayout-mycourses .nav-tabs {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 4px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  margin-bottom: 20px !important;
+  gap: 2px !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+body.pagelayout-mycourses .nav-pills .nav-item,
+body.pagelayout-mycourses .nav-tabs .nav-item {
+  margin: 0 !important;
+  list-style: none !important;
+}
+
+body.pagelayout-mycourses .nav-pills .nav-link,
+body.pagelayout-mycourses .nav-tabs .nav-link {
+  background: transparent !important;
+  border: none !important;
+  border-radius: var(--r-sm) !important;
+  color: var(--sub) !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 16px !important;
+  transition: var(--t) !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+body.pagelayout-mycourses .nav-pills .nav-link:hover,
+body.pagelayout-mycourses .nav-tabs .nav-link:hover {
+  color: var(--text) !important;
+  background: var(--card-h) !important;
+}
+
+body.pagelayout-mycourses .nav-pills .nav-link.active,
+body.pagelayout-mycourses .nav-tabs .nav-link.active,
+body.pagelayout-mycourses .nav-pills .nav-link[aria-selected="true"],
+body.pagelayout-mycourses .nav-tabs .nav-link[aria-selected="true"] {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06) !important;
+}
+
+/* Course filter controls / Search / Sorting shelf */
+body.pagelayout-mycourses .course-view-controls,
+body.pagelayout-mycourses [data-region="filter"] {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 24px !important;
+  padding: 12px 16px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Align and Estheticize Filter Controls & Bootstrap Dropdown Buttons */
+body.pagelayout-mycourses .course-view-controls select,
+body.pagelayout-mycourses .course-view-controls .custom-select,
+body.pagelayout-mycourses [data-region="filter"] select,
+body.pagelayout-mycourses [data-region="filter"] .custom-select,
+body.pagelayout-mycourses [data-region="filter"] .dropdown-toggle,
+body.pagelayout-mycourses [data-region="filter"] button.btn,
+body.pagelayout-mycourses [data-region="filter"] button,
+body.pagelayout-mycourses [data-region="filter"] .btn:not(.search-input) {
+  background-color: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  color: var(--text) !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  height: 38px !important;
+  padding: 6px 14px !important;
+  cursor: pointer !important;
+  transition: var(--t) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  background-image: none !important;
+}
+
+body.pagelayout-mycourses .course-view-controls select:hover,
+body.pagelayout-mycourses .course-view-controls .custom-select:hover,
+body.pagelayout-mycourses [data-region="filter"] select:hover,
+body.pagelayout-mycourses [data-region="filter"] .custom-select:hover,
+body.pagelayout-mycourses [data-region="filter"] .dropdown-toggle:hover,
+body.pagelayout-mycourses [data-region="filter"] button.btn:hover,
+body.pagelayout-mycourses [data-region="filter"] button:hover {
+  border-color: var(--border-h) !important;
+  background-color: var(--card-h) !important;
+  color: var(--text) !important;
+}
+
+/* Ensure Moodle's native Bootstrap dropdown caret stays clean and visible */
+body.pagelayout-mycourses [data-region="filter"] .dropdown-toggle::after {
+  border-top-color: var(--sub) !important;
+  margin-left: 6px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+}
+
+/* Custom Search inputs inside filter shelf */
+body.pagelayout-mycourses .course-view-controls [data-region="search-input"] input,
+body.pagelayout-mycourses [data-region="filter"] [data-region="search-input"] input,
+body.pagelayout-mycourses .course-view-controls .search-input,
+body.pagelayout-mycourses [data-region="filter"] input[type="search"],
+body.pagelayout-mycourses [data-region="filter"] input[type="text"],
+body.pagelayout-mycourses [data-region="filter"] .search-input {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  color: var(--text) !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  padding: 8px 12px 8px 32px !important;
+  height: 38px !important;
+  width: 240px !important;
+  transition: var(--t) !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+body.pagelayout-mycourses .course-view-controls [data-region="search-input"],
+body.pagelayout-mycourses [data-region="filter"] [data-region="search-input"],
+body.pagelayout-mycourses [data-region="filter"] .input-group {
+  position: relative !important;
+  display: inline-flex !important;
+}
+
+body.pagelayout-mycourses .course-view-controls [data-region="search-input"]::before,
+body.pagelayout-mycourses [data-region="filter"] [data-region="search-input"]::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 13px !important;
+  height: 13px !important;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-linecap='round' stroke-linejoin='round' stroke-width='3'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  pointer-events: none !important;
+  z-index: 10 !important;
+}
+
+body.pagelayout-mycourses .course-view-controls [data-region="search-input"] input:focus,
+body.pagelayout-mycourses [data-region="filter"] [data-region="search-input"] input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px var(--accent-s) !important;
+  outline: none !important;
+}
+
+/* Fix Squished Card Columns inside native Bootstrap decks */
+body.pagelayout-mycourses [data-region="courses-view"] {
+  display: block !important;
+  margin-top: 20px !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+body.pagelayout-mycourses [data-region="courses-view"] .card-deck,
+body.pagelayout-mycourses [data-region="courses-view"] .card-group,
+body.pagelayout-mycourses [data-region="courses-view"] .row,
+body.pagelayout-mycourses [data-region="courses-view"] .dashboard-card-deck,
+body.pagelayout-mycourses [data-region="card-deck"],
+body.pagelayout-mycourses .card-deck,
+body.pagelayout-mycourses .card-group,
+body.pagelayout-mycourses .dashboard-card-deck {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 24px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+/* Reset Bootstrap column widths when inside our grid layout to let them fill grid columns */
+body.pagelayout-mycourses .card-deck > div,
+body.pagelayout-mycourses .card-deck > *,
+body.pagelayout-mycourses .card-group > div,
+body.pagelayout-mycourses .card-group > *,
+body.pagelayout-mycourses .dashboard-card-deck > *,
+body.pagelayout-mycourses [data-region="courses-view"] .card-deck > *,
+body.pagelayout-mycourses [data-region="courses-view"] .card-group > *,
+body.pagelayout-mycourses [data-region="courses-view"] .row > *,
+body.pagelayout-mycourses [data-region="courses-view"] .dashboard-card-deck > * {
+  flex: none !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important; /* Let grid gap manage margins */
+}
+
+/* Course cards & Dashboard cards override */
+body.pagelayout-mycourses .course-card,
+body.pagelayout-mycourses .dashboard-card,
+body.pagelayout-mycourses .card-deck .card,
+body.pagelayout-mycourses .card-group .card,
+body.pagelayout-mycourses .dashboard-card-deck .card,
+body.pagelayout-mycourses [data-region="courses-view"] .card,
+body.pagelayout-mycourses [data-region="course-card"] {
   background: var(--card) !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--r-md) !important;
   margin: 0 !important;
   box-shadow: var(--shadow) !important;
-  transition: var(--t) !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: none !important; /* Disables Moodle Bootstrap flex squishing */
+  transition: transform 0.22s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease !important;
+  box-sizing: border-box !important;
 }
 
-body.pagelayout-mycourses .course-card:hover {
+body.pagelayout-mycourses .course-card:hover,
+body.pagelayout-mycourses .dashboard-card:hover,
+body.pagelayout-mycourses .card-deck .card:hover,
+body.pagelayout-mycourses .card-group .card:hover,
+body.pagelayout-mycourses .dashboard-card-deck .card:hover,
+body.pagelayout-mycourses [data-region="courses-view"] .card:hover,
+body.pagelayout-mycourses [data-region="course-card"]:hover {
   border-color: var(--border-h) !important;
   background: var(--card-h) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,.15) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,0.02) !important;
 }
 
-body.pagelayout-mycourses .course-card .card-img-top {
-  height: 120px !important;
+/* Course card image container */
+body.pagelayout-mycourses .course-card .card-img-top,
+body.pagelayout-mycourses .dashboard-card .card-img-top,
+body.pagelayout-mycourses .card .card-img-top,
+body.pagelayout-mycourses .card .card-img {
+  height: 135px !important;
   background-size: cover !important;
   background-position: center !important;
   border-bottom: 1px solid var(--border) !important;
+  position: relative !important;
+  background-color: var(--border) !important;
 }
 
-body.pagelayout-mycourses .course-card .course-info-container {
+body.pagelayout-mycourses .course-card .card-img-top::after,
+body.pagelayout-mycourses .dashboard-card .card-img-top::after,
+body.pagelayout-mycourses .card .card-img-top::after,
+body.pagelayout-mycourses .card .card-img::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.4) 100%) !important;
+  transition: var(--t) !important;
+  opacity: 0.8 !important;
+}
+
+body.pagelayout-mycourses .course-card:hover .card-img-top::after,
+body.pagelayout-mycourses .dashboard-card:hover .card-img-top::after,
+body.pagelayout-mycourses .card:hover .card-img-top::after,
+body.pagelayout-mycourses .card:hover .card-img::after {
+  opacity: 0.45 !important;
+}
+
+/* Geometric fallback gradient for patternless cards */
+body.pagelayout-mycourses .course-card .card-img-top[style*="pattern"],
+body.pagelayout-mycourses .course-card .card-img-top:not([style*="url"]),
+body.pagelayout-mycourses .dashboard-card .card-img-top[style*="pattern"],
+body.pagelayout-mycourses .dashboard-card .card-img-top:not([style*="url"]),
+body.pagelayout-mycourses .card .card-img-top[style*="pattern"],
+body.pagelayout-mycourses .card .card-img-top:not([style*="url"]),
+body.pagelayout-mycourses .card .card-img[style*="pattern"],
+body.pagelayout-mycourses .card .card-img:not([style*="url"]) {
+  background-image: 
+    linear-gradient(135deg, rgba(255,255,255,0.01) 0%, rgba(0,0,0,0.15) 100%),
+    radial-gradient(circle at 100% 0%, var(--card-h) 0%, var(--bg) 80%),
+    linear-gradient(45deg, var(--border) 0%, var(--card) 100%) !important;
+}
+
+/* Clean up Course card info layout and spacing */
+body.pagelayout-mycourses .course-card .course-info-container,
+body.pagelayout-mycourses .dashboard-card .course-info-container,
+body.pagelayout-mycourses .card .course-info-container,
+body.pagelayout-mycourses .card .card-body {
   padding: 16px !important;
   flex: 1 !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important;
+  box-sizing: border-box !important;
 }
 
-body.pagelayout-mycourses .course-card .coursename {
-  font-size: 14.5px !important;
-  font-weight: 600 !important;
+body.pagelayout-mycourses .course-card .categoryname,
+body.pagelayout-mycourses .course-card .text-muted,
+body.pagelayout-mycourses .dashboard-card .categoryname,
+body.pagelayout-mycourses .dashboard-card .text-muted,
+body.pagelayout-mycourses .card .categoryname,
+body.pagelayout-mycourses .card .text-muted {
+  font-family: var(--font) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--sub) !important;
+  margin-bottom: 8px !important;
+  display: inline-block !important;
+}
+
+body.pagelayout-mycourses .course-card .coursename,
+body.pagelayout-mycourses .dashboard-card .coursename,
+body.pagelayout-mycourses .card .coursename,
+body.pagelayout-mycourses [data-region="course-card"] .coursename {
+  font-family: var(--font) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
   color: var(--text) !important;
   line-height: 1.45 !important;
   text-decoration: none !important;
@@ -966,30 +1363,215 @@ body.pagelayout-mycourses .course-card .coursename {
   -webkit-line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
+  transition: var(--t) !important;
+  min-height: 44px !important; /* Force 2-lines spacing equivalent to keep cards dynamically aligned */
 }
 
-body.pagelayout-mycourses .course-card .coursename:hover {
-  color: var(--accent) !important;
+body.pagelayout-mycourses .course-card .coursename:hover,
+body.pagelayout-mycourses .dashboard-card .coursename:hover,
+body.pagelayout-mycourses .card .coursename:hover {
+  color: var(--text) !important;
 }
 
-/* Custom Progress Bars on Dashboard */
-body.pagelayout-mycourses .course-card .progress {
-  height: 6px !important;
-  background-color: var(--border) !important;
-  border-radius: 3px !important;
+/* Premium Card actions (three dots menu) */
+body.pagelayout-mycourses .course-card .dropdown-toggle,
+body.pagelayout-mycourses .dashboard-card .dropdown-toggle,
+body.pagelayout-mycourses .card .dropdown-toggle,
+body.pagelayout-mycourses [data-region="course-card"] .dropdown-toggle {
+  background: transparent !important;
+  border: none !important;
+  color: var(--sub) !important;
+  padding: 6px !important;
+  border-radius: 50% !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: var(--t) !important;
+}
+
+body.pagelayout-mycourses .course-card .dropdown-toggle::after,
+body.pagelayout-mycourses .dashboard-card .dropdown-toggle::after,
+body.pagelayout-mycourses .card .dropdown-toggle::after {
+  display: none !important;
+}
+
+body.pagelayout-mycourses .course-card .dropdown-toggle:hover,
+body.pagelayout-mycourses .dashboard-card .dropdown-toggle:hover,
+body.pagelayout-mycourses .card .dropdown-toggle:hover {
+  background: var(--border) !important;
+  color: var(--text) !important;
+}
+
+body.pagelayout-mycourses .course-card .dropdown-menu,
+body.pagelayout-mycourses .dashboard-card .dropdown-menu,
+body.pagelayout-mycourses .card .dropdown-menu {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-h) !important;
+  border-radius: var(--r-sm) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+  padding: 6px !important;
+}
+
+body.pagelayout-mycourses .course-card .dropdown-item,
+body.pagelayout-mycourses .dashboard-card .dropdown-item,
+body.pagelayout-mycourses .card .dropdown-item {
+  color: var(--sub) !important;
+  font-family: var(--font) !important;
+  font-size: 12px !important;
+  border-radius: var(--r-sm) !important;
+  padding: 8px 12px !important;
+  transition: var(--t) !important;
+}
+
+body.pagelayout-mycourses .course-card .dropdown-item:hover,
+body.pagelayout-mycourses .dashboard-card .dropdown-item:hover,
+body.pagelayout-mycourses .card .dropdown-item:hover {
+  background: var(--card-h) !important;
+  color: var(--text) !important;
+}
+
+/* Premium course dashboard progress bar styling */
+body.pagelayout-mycourses .course-card .progress,
+body.pagelayout-mycourses .dashboard-card .progress,
+body.pagelayout-mycourses .card .progress {
+  height: 4px !important;
+  background-color: var(--border-h) !important;
+  border-radius: 2px !important;
   overflow: hidden !important;
-  margin-top: auto !important;
+  margin-top: 12px !important;
+  margin-bottom: 2px !important;
 }
 
-body.pagelayout-mycourses .course-card .progress-bar {
-  background-color: var(--green) !important;
+body.pagelayout-mycourses .course-card .progress-bar,
+body.pagelayout-mycourses .dashboard-card .progress-bar,
+body.pagelayout-mycourses .card .progress-bar {
+  background: linear-gradient(90deg, var(--green) 0%, #3ecf8e 100%) !important;
 }
 
-body.pagelayout-mycourses .course-card .progress-text {
+body.pagelayout-mycourses .course-card .progress-text,
+body.pagelayout-mycourses .dashboard-card .progress-text,
+body.pagelayout-mycourses .card .progress-text {
+  font-family: var(--font) !important;
   font-size: 11px !important;
-  color: var(--muted) !important;
-  margin-top: 4px !important;
+  color: var(--sub) !important;
+  margin-top: 6px !important;
+  font-weight: 600 !important;
+}
+
+/* Align progress blocks and actions to the card bottom */
+body.pagelayout-mycourses .course-card .course-info-container .d-flex,
+body.pagelayout-mycourses .dashboard-card .course-info-container .d-flex,
+body.pagelayout-mycourses .card .course-info-container .d-flex,
+body.pagelayout-mycourses .card .card-body .d-flex {
+  margin-top: auto !important;
+  padding-top: 8px !important;
+}
+
+/* Pagination controls */
+body.pagelayout-mycourses .pagination,
+body.pagelayout-mycourses [data-region="paging-control-limit-container"] {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 30px !important;
+  gap: 4px !important;
+}
+
+body.pagelayout-mycourses .page-item .page-link {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--sub) !important;
+  padding: 8px 14px !important;
+  border-radius: var(--r-sm) !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
   font-weight: 500 !important;
+  transition: var(--t) !important;
+  text-decoration: none !important;
+}
+
+body.pagelayout-mycourses .page-item:hover .page-link {
+  background: var(--card-h) !important;
+  border-color: var(--border-h) !important;
+  color: var(--text) !important;
+}
+
+body.pagelayout-mycourses .page-item.active .page-link {
+  background: var(--text) !important;
+  border-color: var(--text) !important;
+  color: var(--bg) !important;
+  font-weight: 600 !important;
+}
+
+/* ══ DASHBOARD LIST VIEW & SUMMARY VIEW OVERRIDES ══ */
+
+body.pagelayout-mycourses [data-region="courses-view"] .list-group-item,
+body.pagelayout-mycourses [data-region="course-list-item"] {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  margin-bottom: 12px !important;
+  padding: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 20px !important;
+  box-shadow: var(--shadow) !important;
+  transition: var(--t) !important;
+}
+
+body.pagelayout-mycourses [data-region="courses-view"] .list-group-item:hover,
+body.pagelayout-mycourses [data-region="course-list-item"]:hover {
+  border-color: var(--border-h) !important;
+  background: var(--card-h) !important;
+  transform: translateX(4px) !important;
+}
+
+body.pagelayout-mycourses [data-region="course-list-item"] .course-image,
+body.pagelayout-mycourses [data-region="course-list-item"] .card-img {
+  width: 80px !important;
+  height: 80px !important;
+  border-radius: var(--r-sm) !important;
+  object-fit: cover !important;
+  border: 1px solid var(--border) !important;
+}
+
+body.pagelayout-mycourses [data-region="course-summary-item"] {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  margin-bottom: 16px !important;
+  padding: 20px !important;
+  box-shadow: var(--shadow) !important;
+  transition: var(--t) !important;
+}
+
+body.pagelayout-mycourses [data-region="course-summary-item"]:hover {
+  border-color: var(--border-h) !important;
+  background: var(--card-h) !important;
+}
+
+/* Empty placeholder dashboard message */
+body.pagelayout-mycourses [data-region="empty-message"] {
+  text-align: center !important;
+  padding: 48px 24px !important;
+  background: var(--surface) !important;
+  border: 1px dashed var(--border-h) !important;
+  border-radius: var(--r-md) !important;
+  color: var(--sub) !important;
+  margin-top: 20px !important;
+}
+
+body.pagelayout-mycourses [data-region="empty-message"] img {
+  opacity: 0.25 !important;
+  filter: grayscale(1) invert(1) !important;
+  max-width: 120px !important;
+  margin-bottom: 16px !important;
+}
+
+:root.nh-light body.pagelayout-mycourses [data-region="empty-message"] img {
+  filter: grayscale(1) !important;
+  opacity: 0.4 !important;
 }
 
 
@@ -1047,13 +1629,13 @@ body.pagelayout-course .activity-wrapper:hover {
 }
 
 /* Premium Left Accent Borders for Activity Types */
-body.pagelayout-course .activity.modtype_forum { border-left: 3px solid var(--accent) !important; }
-body.pagelayout-course .activity.modtype_assign { border-left: 3px solid #ff9f43 !important; }
-body.pagelayout-course .activity.modtype_quiz { border-left: 3px solid #ea5455 !important; }
-body.pagelayout-course .activity.modtype_resource { border-left: 3px solid #28c76f !important; }
-body.pagelayout-course .activity.modtype_page { border-left: 3px solid #00cfe8 !important; }
-body.pagelayout-course .activity.modtype_url { border-left: 3px solid #7367f0 !important; }
-body.pagelayout-course .activity.modtype_feedback { border-left: 3px solid #f81f8f !important; }
+/* Premium Grayscale Left Borders for Activity Cards */
+body.pagelayout-course .activity-wrapper {
+  border-left: 3px solid var(--border) !important;
+}
+body.pagelayout-course .activity-wrapper:hover {
+  border-left-color: var(--accent) !important;
+}
 
 body.pagelayout-course .activity a {
   font-weight: 600 !important;
@@ -1063,6 +1645,234 @@ body.pagelayout-course .activity a {
 
 body.pagelayout-course .activity a:hover {
   color: var(--accent) !important;
+}
+
+/* Course View Dual-Column Layout */
+#nhood-course-layout {
+  display: flex !important;
+  gap: 28px !important;
+  max-width: 1280px !important;
+  margin: 32px auto !important;
+  padding: 0 24px !important;
+  align-items: flex-start !important;
+}
+
+#nhood-course-sidebar {
+  width: 280px !important;
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  top: calc(var(--header-h) + 24px) !important;
+  max-height: calc(100vh - var(--header-h) - 48px) !important;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  overflow-y: auto !important;
+  box-shadow: var(--shadow) !important;
+  transition: var(--t) !important;
+  z-index: 100 !important;
+}
+
+/* Hide scrollbar but keep functionality */
+#nhood-course-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+#nhood-course-sidebar::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 2px;
+}
+
+#nhood-course-content-container {
+  flex: 1 !important;
+  min-width: 0 !important; /* prevent overflow */
+}
+
+/* Sidebar styling details */
+.nh-sidebar-inner {
+  padding: 20px !important;
+}
+
+.nh-sidebar-title {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  letter-spacing: 0.08em !important;
+  margin-bottom: 16px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.nh-sidebar-sec-group {
+  margin-bottom: 8px !important;
+  border-radius: var(--r-sm) !important;
+  transition: var(--t) !important;
+}
+
+.nh-sidebar-sec-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 10px !important;
+  border-radius: var(--r-sm) !important;
+  cursor: pointer !important;
+  transition: var(--t) !important;
+  user-select: none !important;
+}
+
+.nh-sidebar-sec-header:hover {
+  background: var(--card-h) !important;
+}
+
+.nh-sidebar-sec-group.active .nh-sidebar-sec-header {
+  background: var(--accent-s) !important;
+}
+
+.nh-sidebar-sec-arrow {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--muted) !important;
+  transition: transform 0.2s ease !important;
+}
+
+.nh-sidebar-sec-arrow svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.nh-sidebar-sec-group.collapsed .nh-sidebar-sec-arrow {
+  transform: rotate(-90deg) !important;
+}
+
+.nh-sidebar-sec-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--sub) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  flex: 1 !important;
+}
+
+.nh-sidebar-sec-header:hover .nh-sidebar-sec-title {
+  color: var(--text) !important;
+}
+
+.nh-sidebar-sec-group.active .nh-sidebar-sec-title {
+  color: var(--text) !important;
+}
+
+.nh-sidebar-sec-items {
+  margin-left: 15px !important;
+  padding-left: 10px !important;
+  border-left: 1px solid var(--border) !important;
+  margin-top: 2px !important;
+}
+
+.nh-sidebar-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 6px 8px !important;
+  border-radius: var(--r-sm) !important;
+  cursor: pointer !important;
+  margin-bottom: 2px !important;
+  transition: var(--t) !important;
+}
+
+.nh-sidebar-item:hover {
+  background: var(--card-h) !important;
+}
+
+.nh-sidebar-item.active {
+  background: var(--border-h) !important;
+}
+
+.nh-sidebar-item-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  color: var(--muted) !important;
+}
+
+.nh-sidebar-item-icon svg {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.nh-sidebar-item.active .nh-sidebar-item-icon {
+  color: var(--text) !important;
+}
+
+.nh-sidebar-item-name {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--sub) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  flex: 1 !important;
+}
+
+.nh-sidebar-item:hover .nh-sidebar-item-name {
+  color: var(--text) !important;
+}
+
+.nh-sidebar-item.active .nh-sidebar-item-name {
+  color: var(--text) !important;
+  font-weight: 600 !important;
+}
+
+.nh-sidebar-item-empty {
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  padding: 4px 8px !important;
+  font-style: italic !important;
+}
+
+/* Activity pulsing highlight when clicked from sidebar */
+@keyframes nhHighlightPulse {
+  0% {
+    box-shadow: 0 0 0 0px var(--accent);
+    border-color: var(--accent) !important;
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--accent-s);
+    border-color: var(--accent) !important;
+  }
+  100% {
+    box-shadow: 0 0 0 0px var(--accent);
+  }
+}
+
+.nh-highlight-pulse {
+  animation: nhHighlightPulse 1.8s ease-in-out !important;
+}
+
+/* Responsive adjustment for course layout sidebar */
+@media (max-width: 1024px) {
+  #nhood-course-layout {
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding: 0 16px !important;
+  }
+  #nhood-course-sidebar {
+    width: 100% !important;
+    position: relative !important;
+    top: 0 !important;
+    max-height: 280px !important;
+  }
+}
+
+/* Clean Moodle margins inside our dual-column wrapper */
+body.pagelayout-course #page {
+  padding-top: var(--header-h) !important;
+  background: var(--bg) !important;
+}
+body.pagelayout-course #region-main {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* ══ FOOTER ═════════════════════════════════════════════ */
@@ -1091,3 +1901,2162 @@ body.pagelayout-course .activity a:hover {
   .nh-search input:focus { width: 160px !important; }
   .nh-site-name, .nh-divider { display: none !important; }
 }
+
+/* ══ ADDED PREMIUM ENHANCEMENTS & OVERRIDES ════════════ */
+
+/* Center and bound page-content in all viewports */
+#page-content {
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+}
+
+/* General contrast overrides & bootstrap elements */
+.text-muted, .muted { color: var(--sub) !important; }
+.text-danger { color: #ea5455 !important; }
+.text-success { color: var(--green) !important; }
+.text-info { color: var(--accent) !important; }
+
+/* Dynamic light/dark support for dropdown menus, popovers and modals */
+.dropdown-menu {
+  background-color: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+.dropdown-item {
+  color: var(--text) !important;
+  transition: var(--t) !important;
+}
+.dropdown-item:hover {
+  background-color: var(--card-h) !important;
+  color: var(--accent) !important;
+}
+.dropdown-divider {
+  border-top: 1px solid var(--border) !important;
+}
+
+/* Modals & Dialogs */
+.modal-content {
+  background-color: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow) !important;
+}
+.modal-header {
+  border-bottom: 1px solid var(--border) !important;
+  background-color: var(--card-h) !important;
+}
+.modal-footer {
+  border-top: 1px solid var(--border) !important;
+}
+
+/* Tables and list styling */
+.table {
+  color: var(--text) !important;
+}
+.table td, .table th {
+  border-top: 1px solid var(--border) !important;
+}
+.table thead th {
+  border-bottom: 2px solid var(--border) !important;
+  background-color: var(--card-h) !important;
+}
+
+/* ══ FOCUSED QUIZ VIEW OVERRIDES (/mod/quiz/...) ══ */
+body.pagelayout-mod-quiz #page-content {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 20px 24px !important;
+}
+
+/* Question card styling */
+.que {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+  box-shadow: var(--shadow) !important;
+  overflow: hidden !important;
+}
+
+/* Question info header */
+.que .info {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  padding: 12px 16px !important;
+  margin-bottom: 16px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  float: none !important;
+  width: auto !important;
+}
+
+.que .info .no {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--accent) !important;
+}
+
+.que .info .grade {
+  font-size: 12px !important;
+  color: var(--sub) !important;
+  font-weight: 500 !important;
+}
+
+/* Question content and formulation */
+.que .content {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.que .qtext {
+  font-size: 15.5px !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+  line-height: 1.55 !important;
+  margin-bottom: 18px !important;
+}
+
+/* Answer block (options list) */
+.que .ablock {
+  margin-top: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.que .ablock .answer > div {
+  padding: 10px 14px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  background: var(--surface) !important;
+  transition: var(--t) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.que .ablock .answer > div:hover {
+  border-color: var(--accent) !important;
+  background: var(--card-h) !important;
+}
+
+/* Checkboxes and radio styles in answers */
+.que input[type="radio"], 
+.que input[type="checkbox"] {
+  accent-color: var(--accent) !important;
+  width: 16px !important;
+  height: 16px !important;
+  cursor: pointer !important;
+}
+
+/* Quiz navigation block */
+#mod_quiz_navblock {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 20px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+#mod_quiz_navblock .card-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--text) !important;
+  margin-bottom: 14px !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding-bottom: 8px !important;
+}
+
+/* Grid of question numbers in nav */
+#mod_quiz_navblock .qnbutton {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: var(--r-sm) !important;
+  border: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 3px !important;
+  transition: var(--t) !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
+#mod_quiz_navblock .qnbutton:hover {
+  border-color: var(--border-h) !important;
+  background: var(--card-h) !important;
+}
+
+#mod_quiz_navblock .qnbutton.active,
+#mod_quiz_navblock .qnbutton.thispage {
+  border-color: var(--accent) !important;
+  background: var(--accent-s) !important;
+  color: var(--accent) !important;
+  box-shadow: 0 0 0 2px var(--accent-s) !important;
+}
+
+#mod_quiz_navblock .qnbutton.complete {
+  background: var(--green) !important;
+  border-color: var(--green) !important;
+  color: #fff !important;
+}
+
+/* Submit and navigation buttons */
+.submitbuttons {
+  display: flex !important;
+  gap: 12px !important;
+  margin-top: 24px !important;
+}
+
+/* ══ LOGIN OVERRIDES ════════════════════════════════════ */
+body.pagelayout-login #page-wrapper,
+body.pagelayout-login .logincontainer,
+body.pagelayout-login #page-header,
+body.pagelayout-login #page-footer,
+body.pagelayout-login #page,
+body.pagelayout-login div#page.drawers,
+body.pagelayout-login .drawers,
+body.pagelayout-login .navbar,
+body.pagelayout-login #adaptable-page-header-wrapper,
+body.pagelayout-login .drawer-toggles,
+body.pagelayout-login [data-region="fixed-nav"],
+body.pagelayout-login #nav-drawer,
+body.pagelayout-login .drawer {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.pagelayout-login {
+  background: var(--bg) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif !important;
+  overflow-x: hidden !important;
+}
+
+#nhood-login-page {
+  display: grid !important;
+  grid-template-columns: 1fr 1.2fr !important;
+  min-height: 100vh !important;
+  width: 100vw !important;
+  position: relative !important;
+  z-index: 999999 !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+@media (max-width: 900px) {
+  #nhood-login-page {
+    grid-template-columns: 1fr !important;
+  }
+  .nl-brand-col {
+    display: none !important;
+  }
+}
+
+.nl-brand-col {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  padding: 60px !important;
+  background: var(--surface) !important;
+  overflow: hidden !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+/* Accent mesh & tech grid */
+.nl-brand-col .nl-mesh {
+  position: absolute !important;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 70%),
+              radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 50%) !important;
+  filter: blur(60px) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+.nl-brand-col .nl-grid-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px), 
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px) !important;
+  background-size: 24px 24px !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+
+.nl-brand-content {
+  position: relative !important;
+  z-index: 3 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  justify-content: space-between !important;
+}
+
+.nl-logo-area {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.nl-logo-emoji {
+  font-size: 28px !important;
+  filter: drop-shadow(0 0 10px rgba(99, 120, 255, 0.3)) !important;
+}
+
+.nl-university {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  color: #ffffff !important;
+}
+
+.nl-hero-text {
+  margin-top: auto !important;
+  margin-bottom: auto !important;
+  max-width: 480px !important;
+  text-align: left !important;
+}
+
+.nl-eyebrow {
+  display: inline-block !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.15em !important;
+  color: var(--accent) !important;
+  text-transform: uppercase !important;
+  margin-bottom: 16px !important;
+}
+
+.nl-hero-text h1 {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 48px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.03em !important;
+  color: #ffffff !important;
+  margin-bottom: 20px !important;
+  background: linear-gradient(135deg, #ffffff 40%, rgba(255,255,255,0.7) 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.nl-hero-text p {
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  color: var(--sub) !important;
+}
+
+.nl-brand-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding-top: 24px !important;
+}
+
+.nl-secure-indicator {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: var(--green) !important;
+}
+
+.secure-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 1.8s infinite;
+}
+
+.nl-form-col {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 40px !important;
+  position: relative !important;
+  background: var(--bg) !important;
+}
+
+/* Light mode specific adjustments */
+:root.nh-light .nl-form-col {
+  background: #f4f4f5 !important;
+}
+
+.nl-theme-btn {
+  position: absolute !important;
+  top: 40px !important;
+  right: 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--border) !important;
+  background: var(--card) !important;
+  color: var(--text) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: var(--t) !important;
+  font-size: 16px !important;
+  z-index: 10 !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.nl-theme-btn:hover {
+  border-color: var(--border-h) !important;
+  background: var(--card-h) !important;
+  transform: scale(1.05) !important;
+}
+
+.nl-form-container {
+  width: 100% !important;
+  max-width: 440px !important;
+  z-index: 5 !important;
+}
+
+.nl-form-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 40px !important;
+  box-shadow: var(--shadow) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.nl-form-card:hover {
+  border-color: var(--accent) !important;
+  box-shadow: 0 12px 40px rgba(99, 120, 255, 0.08), var(--shadow) !important;
+}
+
+.nl-card-header {
+  margin-bottom: 28px !important;
+  text-align: left !important;
+}
+
+.nl-badge-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: rgba(99, 120, 255, 0.08) !important;
+  border: 1px solid rgba(99, 120, 255, 0.15) !important;
+  border-radius: 30px !important;
+  padding: 4px 12px !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: var(--accent) !important;
+  text-transform: uppercase !important;
+  margin-bottom: 14px !important;
+}
+
+.nl-pulse-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulse 1.8s infinite;
+}
+
+.nl-card-header h2 {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--text) !important;
+  margin: 0 0 6px 0 !important;
+}
+
+.nl-card-header p {
+  font-size: 13.5px !important;
+  color: var(--sub) !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+/* Fields & inputs */
+.nl-field-group {
+  margin-bottom: 20px !important;
+  text-align: left !important;
+}
+
+.nl-field-group label {
+  display: block !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--text) !important;
+  margin-bottom: 8px !important;
+}
+
+.nl-label-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+}
+
+.nl-label-row label {
+  margin-bottom: 0 !important;
+}
+
+.nl-forgot-inline {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--accent) !important;
+  text-decoration: none !important;
+  transition: var(--t) !important;
+}
+
+.nl-forgot-inline:hover {
+  text-decoration: underline !important;
+  opacity: 0.85 !important;
+}
+
+.nl-input-wrapper {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.nl-input-icon {
+  position: absolute !important;
+  left: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 14px !important;
+  color: var(--sub) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+.nl-input-wrapper input {
+  width: 100% !important;
+  background: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 12px 14px 12px 42px !important;
+  color: var(--text) !important;
+  font-family: inherit !important;
+  font-size: 13.5px !important;
+  outline: none !important;
+  transition: var(--t) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.nl-input-wrapper input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-s), inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.nl-options-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 24px !important;
+}
+
+.nl-checkbox-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--sub) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+.nl-checkbox-label input {
+  position: absolute !important;
+  opacity: 0 !important;
+  cursor: pointer !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+.nl-checkbox-custom {
+  position: relative !important;
+  height: 16px !important;
+  width: 16px !important;
+  background-color: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  transition: var(--t) !important;
+}
+
+.nl-checkbox-label:hover input ~ .nl-checkbox-custom {
+  border-color: var(--border-h) !important;
+}
+
+.nl-checkbox-label input:checked ~ .nl-checkbox-custom {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+
+.nl-checkbox-custom::after {
+  content: "" !important;
+  position: absolute !important;
+  display: none !important;
+  left: 5px !important;
+  top: 2px !important;
+  width: 4px !important;
+  height: 8px !important;
+  border: solid var(--bg) !important;
+  border-width: 0 2px 2px 0 !important;
+  transform: rotate(45deg) !important;
+}
+
+.nl-checkbox-label input:checked ~ .nl-checkbox-custom::after {
+  display: block !important;
+}
+
+/* Submit button */
+.nl-submit-btn {
+  width: 100% !important;
+  background: var(--accent) !important;
+  color: var(--bg) !important;
+  border: none !important;
+  border-radius: var(--r-md) !important;
+  padding: 13px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: 0 4px 12px var(--accent-s) !important;
+  transition: var(--t) !important;
+  position: relative !important;
+  overflow: hidden;
+}
+
+.nl-submit-btn::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+  transform: translateX(-100%) !important;
+  transition: 0.6s !important;
+}
+
+.nl-submit-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px var(--accent-s) !important;
+}
+
+.nl-submit-btn:hover::after {
+  transform: translateX(100%) !important;
+}
+
+.nl-btn-arrow {
+  font-size: 15px !important;
+  transition: transform 0.2s ease !important;
+}
+
+.nl-submit-btn:hover .nl-btn-arrow {
+  transform: translateX(3px) !important;
+}
+
+.nl-card-footer {
+  margin-top: 24px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid var(--border) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 12.5px !important;
+  color: var(--sub) !important;
+}
+
+.nl-signup-link {
+  font-weight: 600 !important;
+  color: var(--accent) !important;
+  text-decoration: none !important;
+  transition: var(--t) !important;
+}
+
+.nl-signup-link:hover {
+  text-decoration: underline !important;
+}
+
+/* Error box styles */
+.nl-error-box {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  border-radius: var(--r-md) !important;
+  padding: 12px 14px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin-bottom: 20px !important;
+  text-align: left !important;
+  animation: floatIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) both !important;
+}
+
+.nl-error-icon {
+  font-size: 15px !important;
+  color: #ef4444 !important;
+  flex-shrink: 0 !important;
+}
+
+.nl-error-text {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #ef4444 !important;
+  line-height: 1.4 !important;
+}
+
+/* Scraped logo image */
+.nl-logo-img {
+  height: 36px !important;
+  max-width: 150px !important;
+  object-fit: contain !important;
+  transition: filter .2s ease !important;
+}
+
+body:not(.nh-light) .nl-logo-img {
+  filter: invert(1) brightness(2) drop-shadow(0 2px 8px rgba(255, 255, 255, 0.15)) !important;
+}
+
+body.nh-light .nl-logo-img {
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.1)) !important;
+}
+
+/* Giant glowing UTN gear logo container */
+.nl-gear-container {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 30px 0 !important;
+  position: relative !important;
+  z-index: 2 !important;
+  flex-grow: 1 !important;
+}
+
+.nl-utn-svg-gear {
+  width: 220px !important;
+  height: 220px !important;
+  color: var(--accent) !important;
+  filter: drop-shadow(0 0 25px rgba(99, 120, 255, 0.35)) !important;
+  transition: var(--t) !important;
+  animation: pulseGlow 4s ease-in-out infinite alternate !important;
+}
+
+.nl-utn-svg-gear text {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 900 !important;
+}
+
+:root.nh-light .nl-utn-svg-gear {
+  filter: drop-shadow(0 4px 15px rgba(79, 91, 219, 0.2)) !important;
+}
+
+.nl-gear-body {
+  transform-origin: 60px 60px !important;
+  animation: rotateGear 40s linear infinite !important;
+}
+
+.nl-gear-hub-circle {
+  fill: #090a0f !important;
+}
+
+:root.nh-light .nl-gear-hub-circle {
+  fill: #ffffff !important;
+}
+
+@keyframes rotateGear {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0% { filter: drop-shadow(0 0 15px rgba(99, 120, 255, 0.25)); }
+  100% { filter: drop-shadow(0 0 35px rgba(99, 120, 255, 0.45)); }
+}
+
+:root.nh-light .nl-utn-svg-gear {
+  animation: none !important;
+}
+
+
+/* ══ INDIVIDUAL COURSE VIEW IMPROVEMENTS (WHITESPACE, CUSTOM HEADER, SHADCN TABS) ══ */
+
+/* Collapse massive white space at the top of course page views */
+body.pagelayout-course #page-header,
+body.pagelayout-course .page-header {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  min-height: 0 !important;
+}
+
+body.pagelayout-course #page-navbar,
+body.pagelayout-course .breadcrumb,
+body.pagelayout-course .breadcrumb-item,
+body.pagelayout-course .page-header-headings,
+body.pagelayout-course .page-context-header,
+body.pagelayout-course #page-header h1,
+body.pagelayout-course .page-header h1 {
+  display: none !important;
+}
+
+body.pagelayout-course #page-content {
+  padding: 0 !important;
+}
+
+/* Adjust the main course layout to sit closer to the header */
+body.pagelayout-course #nhood-course-layout {
+  margin-top: 16px !important;
+}
+
+/* Beautiful Premium Course Header Block */
+.nh-course-header-block {
+  margin-bottom: 24px !important;
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.nh-course-badge-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.nh-course-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 2px 8px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+}
+
+.nh-course-title-text {
+  font-family: 'Outfit', var(--font) !important;
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  color: var(--text) !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+
+/* Modern Segmented Tab Controls (shadcn/ui Tabs Style) for Course pages */
+body.pagelayout-course .moremenu,
+body.pagelayout-course .secondary-navigation {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 0 20px 0 !important;
+  box-shadow: none !important;
+}
+
+body.pagelayout-course .moremenu .nav-pills,
+body.pagelayout-course .moremenu .nav-tabs,
+body.pagelayout-course .secondary-navigation .nav-tabs,
+body.pagelayout-course .nav-pills,
+body.pagelayout-course .nav-tabs {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 4px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  margin: 0 0 20px 0 !important;
+  gap: 2px !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+body.pagelayout-course .moremenu .nav-pills .nav-item,
+body.pagelayout-course .moremenu .nav-tabs .nav-item,
+body.pagelayout-course .secondary-navigation .nav-tabs .nav-item,
+body.pagelayout-course .nav-pills .nav-item,
+body.pagelayout-course .nav-tabs .nav-item {
+  margin: 0 !important;
+  list-style: none !important;
+}
+
+body.pagelayout-course .moremenu .nav-pills .nav-link,
+body.pagelayout-course .moremenu .nav-tabs .nav-link,
+body.pagelayout-course .secondary-navigation .nav-tabs .nav-link,
+body.pagelayout-course .nav-pills .nav-link,
+body.pagelayout-course .nav-tabs .nav-link {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: none !important;
+  border-radius: var(--r-sm) !important;
+  color: var(--sub) !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 16px !important;
+  transition: var(--t) !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+body.pagelayout-course .moremenu .nav-pills .nav-link::after,
+body.pagelayout-course .moremenu .nav-tabs .nav-link::after,
+body.pagelayout-course .secondary-navigation .nav-tabs .nav-link::after,
+body.pagelayout-course .nav-pills .nav-link::after,
+body.pagelayout-course .nav-tabs .nav-link::after {
+  display: none !important;
+  content: none !important;
+}
+
+body.pagelayout-course .moremenu .nav-pills .nav-link:hover,
+body.pagelayout-course .moremenu .nav-tabs .nav-link:hover,
+body.pagelayout-course .secondary-navigation .nav-tabs .nav-link:hover,
+body.pagelayout-course .nav-pills .nav-link:hover,
+body.pagelayout-course .nav-tabs .nav-link:hover {
+  color: var(--text) !important;
+  background: var(--card-h) !important;
+  border: none !important;
+  border-bottom: none !important;
+}
+
+body.pagelayout-course .moremenu .nav-pills .nav-link.active,
+body.pagelayout-course .moremenu .nav-tabs .nav-link.active,
+body.pagelayout-course .secondary-navigation .nav-tabs .nav-link.active,
+body.pagelayout-course .nav-pills .nav-link.active,
+body.pagelayout-course .nav-tabs .nav-link.active,
+body.pagelayout-course .moremenu .nav-pills .nav-link[aria-selected="true"],
+body.pagelayout-course .moremenu .nav-tabs .nav-link[aria-selected="true"],
+body.pagelayout-course .secondary-navigation .nav-tabs .nav-link[aria-selected="true"],
+body.pagelayout-course .nav-pills .nav-link[aria-selected="true"],
+body.pagelayout-course .nav-tabs .nav-link[aria-selected="true"] {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06) !important;
+  border: none !important;
+  border-bottom: none !important;
+}
+
+/* Un-collapse Moodle's "Más" (More) dropdown into a horizontal row of navigation tabs */
+body.pagelayout-course .moremenu .nav-tabs .dropdownmoremenu,
+body.pagelayout-course .moremenu .nav-pills .dropdownmoremenu,
+body.pagelayout-course .secondary-navigation .dropdownmoremenu {
+  display: contents !important;
+}
+
+body.pagelayout-course .moremenu .dropdown-toggle,
+body.pagelayout-course .secondary-navigation .dropdown-toggle {
+  display: none !important; /* Hide "Más" trigger button */
+}
+
+body.pagelayout-course .moremenu .dropdown-menu,
+body.pagelayout-course .secondary-navigation .dropdown-menu {
+  position: static !important;
+  display: inline-flex !important; /* Force to show as inline-flex items */
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 2px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transform: none !important;
+  float: none !important;
+  min-width: 0 !important;
+}
+
+body.pagelayout-course .moremenu .dropdown-menu .dropdown-item,
+body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item {
+  background: transparent !important;
+  border: none !important;
+  border-radius: var(--r-sm) !important;
+  color: var(--sub) !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 16px !important;
+  transition: var(--t) !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  width: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  line-height: inherit !important;
+}
+
+body.pagelayout-course .moremenu .dropdown-menu .dropdown-item:hover,
+body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item:hover {
+  color: var(--text) !important;
+  background: var(--card-h) !important;
+}
+
+body.pagelayout-course .moremenu .dropdown-menu .dropdown-item.active,
+body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item.active,
+body.pagelayout-course .moremenu .dropdown-menu .dropdown-item[aria-selected="true"],
+body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item[aria-selected="true"] {
+  background: var(--card) !important;
+  color: var(--text) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06) !important;
+}
+
+/* Hide active checkmarks/icons inside the collapsed dropdown menu items to look like clean tabs */
+body.pagelayout-course .moremenu .dropdown-menu .dropdown-item i,
+body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item i,
+body.pagelayout-course .moremenu .dropdown-menu .dropdown-item::before,
+body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item::before {
+  display: none !important;
+}
+
+
+/* ══ AUTONOMOUS PAGE AUDIT & LEGACY CONTROLS STYLING sweep ══ */
+
+/* Premium shadcn/ui-like Edit Mode Switch & Moodle Native Controls inside our Header */
+.nh-native-controls {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-right: 8px !important;
+}
+
+.nh-native-controls .editmode-toggle-form,
+.nh-native-controls [data-region="editmode-toggle"] {
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+}
+
+.nh-native-controls .custom-control-input {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.nh-native-controls .custom-switch {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding-left: 0 !important;
+}
+
+.nh-native-controls .custom-switch .custom-control-label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--sub) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  margin-bottom: 0 !important;
+}
+
+.nh-native-controls .custom-switch .custom-control-input {
+  opacity: 0 !important;
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.nh-native-controls .custom-switch .custom-control-label::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 36px !important;
+  height: 20px !important;
+  background-color: var(--border-h) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  position: relative !important;
+  vertical-align: middle !important;
+  margin-right: 8px !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  left: 0 !important;
+  top: 0 !important;
+}
+
+.nh-native-controls .custom-switch .custom-control-label::after {
+  content: "" !important;
+  display: block !important;
+  width: 14px !important;
+  height: 14px !important;
+  background-color: var(--text) !important;
+  border-radius: 50% !important;
+  position: absolute !important;
+  left: 4px !important;
+  top: 3px !important;
+  transition: transform 0.2s ease, background-color 0.2s ease !important;
+}
+
+/* Checked state */
+.nh-native-controls .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+
+.nh-native-controls .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+  transform: translateX(16px) !important;
+  background-color: var(--bg) !important;
+}
+
+/* Notification and Messages Popover Icon Restyling */
+.nh-native-controls .popover-region {
+  position: relative !important;
+  margin: 0 !important;
+}
+
+.nh-native-controls .popover-region-toggle {
+  background: transparent !important;
+  border: none !important;
+  color: var(--sub) !important;
+  padding: 8px !important;
+  border-radius: var(--r-sm) !important;
+  transition: var(--t) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  outline: none !important;
+}
+
+.nh-native-controls .popover-region-toggle:hover {
+  background: var(--card-h) !important;
+  color: var(--text) !important;
+}
+
+.nh-native-controls .popover-region-toggle i,
+.nh-native-controls .popover-region-toggle svg {
+  font-size: 16px !important;
+  color: currentColor !important;
+}
+
+/* Popover Unread Count Badges */
+.nh-native-controls .popover-region .count-container,
+.nh-native-controls .popover-region-toggle .badge,
+.nh-native-controls .popover-region [data-region="count-container"] {
+  position: absolute !important;
+  top: 2px !important;
+  right: 2px !important;
+  background: var(--text) !important;
+  color: var(--bg) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  min-width: 14px !important;
+  height: 14px !important;
+  padding: 0 4px !important;
+  border-radius: 7px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1.5px solid var(--surface) !important;
+  line-height: 1 !important;
+  z-index: 10 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+/* Popover Content Panels */
+.nh-native-controls .popover-region-container {
+  position: absolute !important;
+  right: 0 !important;
+  left: auto !important;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow) !important;
+  top: calc(var(--header-h) - 8px) !important;
+  width: 320px !important;
+  z-index: 10000 !important;
+}
+
+.nh-native-controls .popover-region-header {
+  border-bottom: 1px solid var(--border) !important;
+  padding: 12px 16px !important;
+  background: var(--surface) !important;
+}
+
+.nh-native-controls .popover-region-header-title {
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  font-size: 13.5px !important;
+}
+
+.nh-native-controls .popover-region-footer {
+  border-top: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+  padding: 10px 14px !important;
+}
+
+.nh-native-controls .popover-region-footer a {
+  color: var(--sub) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+.nh-native-controls .popover-region-footer a:hover {
+  color: var(--accent) !important;
+}
+
+.nh-native-controls .notification-item,
+.nh-native-controls .message-item {
+  border-bottom: 1px solid var(--border) !important;
+  padding: 12px 16px !important;
+  transition: var(--t) !important;
+  background: transparent !important;
+}
+
+.nh-native-controls .notification-item:hover,
+.nh-native-controls .message-item:hover {
+  background: var(--card-h) !important;
+}
+
+.nh-native-controls .notification-item .content,
+.nh-native-controls .message-item .content {
+  color: var(--text) !important;
+  font-size: 12.5px !important;
+}
+
+/* Forums Path and Thread Overrides */
+.path-mod-forum .forumpost,
+body.pagelayout-mod-forum .forumpost {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 20px !important;
+  margin-bottom: 16px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.path-mod-forum .forumpost .header,
+body.pagelayout-mod-forum .forumpost .header {
+  border-bottom: 1px solid var(--border) !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 16px !important;
+  background: transparent !important;
+}
+
+.path-mod-forum .forumpost .author,
+body.pagelayout-mod-forum .forumpost .author {
+  font-size: 12px !important;
+  color: var(--muted) !important;
+}
+
+.path-mod-forum .forumpost .subject,
+body.pagelayout-mod-forum .forumpost .subject {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin-bottom: 4px !important;
+}
+
+.path-mod-forum .forumpost .content,
+body.pagelayout-mod-forum .forumpost .content {
+  color: var(--text) !important;
+  font-size: 14.5px !important;
+  line-height: 1.6 !important;
+}
+
+.path-mod-forum .forumpost .options,
+body.pagelayout-mod-forum .forumpost .options {
+  display: flex !important;
+  gap: 12px !important;
+  margin-top: 16px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+.path-mod-forum .forumpost .options a,
+body.pagelayout-mod-forum .forumpost .options a {
+  font-size: 12px !important;
+  color: var(--sub) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+.path-mod-forum .forumpost .options a:hover,
+body.pagelayout-mod-forum .forumpost .options a:hover {
+  color: var(--accent) !important;
+}
+
+/* Forum discussions list table */
+.path-mod-forum .forumheaderlist,
+body.pagelayout-mod-forum .forumheaderlist {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow) !important;
+  overflow: hidden !important;
+}
+
+.path-mod-forum .forumheaderlist th,
+body.pagelayout-mod-forum .forumheaderlist th {
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  padding: 12px 16px !important;
+}
+
+.path-mod-forum .forumheaderlist td,
+body.pagelayout-mod-forum .forumheaderlist td {
+  padding: 12px 16px !important;
+  border-top: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-size: 13.5px !important;
+}
+
+/* Assignments Path & Submission Status Overrides */
+.path-mod-assign .submissionstatustable,
+.path-mod-assign .feedbacktable,
+body.pagelayout-mod-assign .submissionstatustable,
+body.pagelayout-mod-assign .feedbacktable {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 16px !important;
+  margin-bottom: 24px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.path-mod-assign .submissionstatustable table,
+.path-mod-assign .feedbacktable table,
+body.pagelayout-mod-assign .submissionstatustable table,
+body.pagelayout-mod-assign .feedbacktable table {
+  margin: 0 !important;
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.path-mod-assign .submissionstatustable td,
+.path-mod-assign .feedbacktable td,
+body.pagelayout-mod-assign .submissionstatustable td,
+body.pagelayout-mod-assign .feedbacktable td {
+  padding: 12px 16px !important;
+  border-top: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-size: 13.5px !important;
+}
+
+.path-mod-assign .submissionstatustable td.r0,
+.path-mod-assign .feedbacktable td.r0,
+body.pagelayout-mod-assign .submissionstatustable td.r0,
+body.pagelayout-mod-assign .feedbacktable td.r0 {
+  font-weight: 600 !important;
+  color: var(--sub) !important;
+  width: 240px !important;
+}
+
+/* Submission states (draft, submitted, graded) */
+.path-mod-assign .submissionstatustable .submissionstatusdraft,
+.path-mod-assign .feedbacktable .submissionstatusdraft,
+body.pagelayout-mod-assign .submissionstatustable .submissionstatusdraft,
+body.pagelayout-mod-assign .feedbacktable .submissionstatusdraft {
+  background-color: var(--border-h) !important;
+  color: var(--text) !important;
+  padding: 4px 10px !important;
+  border-radius: var(--r-sm) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+}
+
+.path-mod-assign .submissionstatustable .submissionstatussubmitted,
+.path-mod-assign .feedbacktable .submissionstatussubmitted,
+body.pagelayout-mod-assign .submissionstatustable .submissionstatussubmitted,
+body.pagelayout-mod-assign .feedbacktable .submissionstatussubmitted {
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  color: rgb(34, 197, 94) !important;
+  padding: 4px 10px !important;
+  border-radius: var(--r-sm) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+}
+
+.path-mod-assign .submissionstatustable .submissiongraded,
+.path-mod-assign .feedbacktable .submissiongraded,
+body.pagelayout-mod-assign .submissionstatustable .submissiongraded,
+body.pagelayout-mod-assign .feedbacktable .submissiongraded {
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  color: rgb(34, 197, 94) !important;
+  padding: 4px 10px !important;
+  border-radius: var(--r-sm) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+}
+
+/* User Profile Page Overrides */
+.path-user-profile .userprofile,
+.path-user-profile .profile_tree,
+body.pagelayout-user .userprofile,
+body.pagelayout-profile .userprofile {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.path-user-profile .userprofile section,
+body.pagelayout-user .userprofile section {
+  margin-bottom: 24px !important;
+}
+
+.path-user-profile .userprofile section:last-child,
+body.pagelayout-user .userprofile section:last-child {
+  margin-bottom: 0 !important;
+}
+
+.path-user-profile .userprofile h3,
+body.pagelayout-user .userprofile h3 {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 16px !important;
+}
+
+.path-user-profile .userprofile dl dt,
+body.pagelayout-user .userprofile dl dt {
+  font-size: 12px !important;
+  color: var(--muted) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.path-user-profile .userprofile dl dd,
+body.pagelayout-user .userprofile dl dd {
+  font-size: 14px !important;
+  color: var(--text) !important;
+  margin-bottom: 16px !important;
+}
+
+/* User Gradebook/Grades Report Overrides */
+.path-grade-report-user .user-grade,
+body.pagelayout-grade .user-grade,
+body[class*="pagelayout-grade"] .user-grade {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow) !important;
+  overflow: hidden !important;
+}
+
+.path-grade-report-user .user-grade table,
+body.pagelayout-grade .user-grade table,
+body[class*="pagelayout-grade"] .user-grade table {
+  width: 100% !important;
+  margin: 0 !important;
+  border-collapse: collapse !important;
+}
+
+.path-grade-report-user .user-grade th,
+.path-grade-report-user .user-grade td,
+body.pagelayout-grade .user-grade th,
+body.pagelayout-grade .user-grade td {
+  padding: 14px 18px !important;
+  font-size: 13.5px !important;
+}
+
+.path-grade-report-user .user-grade tr.item,
+body.pagelayout-grade .user-grade tr.item {
+  border-bottom: 1px solid var(--border) !important;
+  transition: var(--t) !important;
+}
+
+.path-grade-report-user .user-grade tr.item:hover,
+body.pagelayout-grade .user-grade tr.item:hover {
+  background: var(--card-h) !important;
+}
+
+.path-grade-report-user .user-grade tr.category,
+body.pagelayout-grade .user-grade tr.category {
+  background: var(--surface) !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.path-grade-report-user .user-grade tr.baggr,
+body.pagelayout-grade .user-grade tr.baggr {
+  background: var(--surface) !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* Standard Moodle Form (mform) overrides */
+body:not(.pagelayout-frontpage) .mform fieldset {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+  background: var(--card) !important;
+}
+
+body:not(.pagelayout-frontpage) .mform legend {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  padding: 0 10px !important;
+  width: auto !important;
+  margin-bottom: 0 !important;
+  border-bottom: none !important;
+}
+
+body:not(.pagelayout-frontpage) .mform .fitem {
+  margin-bottom: 16px !important;
+}
+
+body:not(.pagelayout-frontpage) .mform .fitem:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ██████  CALENDAR PAGE (/calendar/view.php)
+   ══════════════════════════════════════════════════════════ */
+
+/* Page wrapper */
+body.pagelayout-standard #page-content .maincontent { color: var(--text) !important; }
+
+/* Calendar table */
+.calendarwrapper,
+#page-content .calendarwrapper { background: var(--card) !important; border-radius: var(--r-md) !important; overflow: hidden !important; border: 1px solid var(--border) !important; box-shadow: var(--shadow) !important; }
+
+.calendarwrapper table.calendartable,
+table.calendartable {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  background: var(--card) !important;
+  color: var(--text) !important;
+}
+
+/* Month navigation header */
+table.calendartable thead,
+.calendartable thead th,
+.calendarwrapper .header {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  font-family: var(--font) !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 10px 14px !important;
+  text-align: center !important;
+}
+
+/* Calendar navigation arrows */
+.calendartable .arrow a,
+.calendarwrapper a.arrow,
+a[href*="calendar"].arrow {
+  color: var(--sub) !important;
+  transition: var(--t) !important;
+}
+.calendartable .arrow a:hover,
+.calendarwrapper a.arrow:hover { color: var(--accent) !important; }
+
+/* Day cells */
+table.calendartable td {
+  border: 1px solid var(--border) !important;
+  padding: 8px 10px !important;
+  vertical-align: top !important;
+  font-size: 13px !important;
+  color: var(--sub) !important;
+  background: var(--card) !important;
+  transition: background .15s ease !important;
+  min-height: 60px !important;
+}
+
+table.calendartable td:hover { background: var(--card-h) !important; }
+
+/* Today highlight */
+table.calendartable td.today {
+  background: var(--card-h) !important;
+  border-color: var(--border-h) !important;
+}
+table.calendartable td.today .day-number { font-weight: 700 !important; color: var(--accent) !important; }
+
+/* Weekend dimming */
+table.calendartable td.weekend { background: var(--bg) !important; }
+
+/* Day number */
+.calendartable .day-number,
+.calendartable a[href*="view=day"] { color: var(--text) !important; font-weight: 600 !important; font-size: 12px !important; text-decoration: none !important; }
+
+/* Events inside calendar cells */
+.calendartable .events-underway,
+.calendartable .event {
+  background: var(--card-h) !important;
+  border-left: 3px solid var(--accent) !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  margin: 2px 0 !important;
+  font-size: 11px !important;
+  color: var(--text) !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Calendar event colors by type */
+.calendartable .event.event_assignment { border-left-color: #f59e0b !important; }
+.calendartable .event.event_quiz       { border-left-color: #6366f1 !important; }
+.calendartable .event.event_course     { border-left-color: var(--green) !important; }
+.calendartable .event.event_category   { border-left-color: #ec4899 !important; }
+
+/* Calendar sidebar filter block */
+.block_calendar_month,
+.block_calendar_upcoming {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Upcoming events list */
+.block_calendar_upcoming .card,
+.block_calendar_upcoming li.event {
+  background: var(--card) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  padding: 10px 14px !important;
+  margin: 0 !important;
+  transition: background .15s ease !important;
+}
+.block_calendar_upcoming li.event:last-child { border-bottom: none !important; }
+.block_calendar_upcoming li.event:hover { background: var(--card-h) !important; }
+.block_calendar_upcoming .event-name a,
+.block_calendar_upcoming .event-name { color: var(--text) !important; font-weight: 600 !important; font-size: 13px !important; }
+.block_calendar_upcoming .event-count { color: var(--sub) !important; font-size: 12px !important; }
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  PARTICIPANTS / USER LIST (/user/index.php)
+   ══════════════════════════════════════════════════════════ */
+
+/* Participants toolbar */
+#participants-toolbar,
+[data-region="participants-filter"] {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 14px 18px !important;
+  margin-bottom: 20px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Participants table wrapper */
+#participants,
+[data-region="participants"] {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Table header */
+#participants table thead th,
+[data-region="participants"] table thead th {
+  background: var(--surface) !important;
+  color: var(--sub) !important;
+  font-family: var(--font) !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: .06em !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 12px 16px !important;
+}
+
+/* Table rows */
+#participants table tbody tr,
+[data-region="participants"] table tbody tr {
+  border-bottom: 1px solid var(--border) !important;
+  transition: background .15s ease !important;
+}
+#participants table tbody tr:last-child,
+[data-region="participants"] table tbody tr:last-child { border-bottom: none !important; }
+#participants table tbody tr:hover,
+[data-region="participants"] table tbody tr:hover { background: var(--card-h) !important; }
+
+/* Table cells */
+#participants table tbody td,
+[data-region="participants"] table tbody td {
+  padding: 12px 16px !important;
+  color: var(--text) !important;
+  font-size: 13.5px !important;
+  vertical-align: middle !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Participant avatar */
+#participants .userpicture,
+[data-region="participants"] .userpicture {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Participant name link */
+#participants .fullname a,
+[data-region="participants"] .fullname a {
+  color: var(--text) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: color .15s ease !important;
+}
+#participants .fullname a:hover,
+[data-region="participants"] .fullname a:hover { color: var(--accent) !important; }
+
+/* Role badge */
+#participants .badge,
+[data-region="participants"] .badge {
+  background: var(--card-h) !important;
+  color: var(--sub) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 999px !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  padding: 2px 8px !important;
+}
+
+/* Participants footer / pagination */
+#participants .pagination,
+[data-region="participants"] .pagination { margin-top: 16px !important; }
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  MESSAGES FULL-PAGE (/message/index.php)
+   ══════════════════════════════════════════════════════════ */
+
+/* Message app container */
+[data-region="message-drawer"],
+.message-app,
+#page-message-index #page-content {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* Conversation list panel */
+[data-region="view-overview"],
+[data-region="view-search"],
+.message-app .conversations {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+/* Individual conversation row */
+[data-region="view-overview"] [data-region="message-list-area"] li,
+[data-region="view-overview"] .list-group-item,
+.message-app .list-group-item {
+  background: transparent !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  padding: 12px 16px !important;
+  transition: background .15s ease !important;
+  cursor: pointer !important;
+}
+[data-region="view-overview"] .list-group-item:hover,
+.message-app .list-group-item:hover { background: var(--card-h) !important; }
+[data-region="view-overview"] .list-group-item.active,
+.message-app .list-group-item.active {
+  background: var(--card-h) !important;
+  border-left: 2px solid var(--accent) !important;
+}
+
+/* Conversation names / last message preview */
+.message-app .contact-name,
+[data-region="view-overview"] .contact-name { font-weight: 600 !important; font-size: 13px !important; color: var(--text) !important; }
+.message-app .message-preview,
+[data-region="view-overview"] .message-preview { color: var(--sub) !important; font-size: 12px !important; }
+
+/* Message thread area */
+[data-region="view-conversation"] .messages-container,
+.message-app .messages-container {
+  background: var(--bg) !important;
+  padding: 20px !important;
+}
+
+/* Individual message bubbles */
+[data-region="message"] .message-text,
+.message-app .message .message-text {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: 12px !important;
+  padding: 8px 14px !important;
+  font-size: 13.5px !important;
+  max-width: 70% !important;
+  line-height: 1.5 !important;
+}
+
+/* Own message bubbles */
+[data-region="message"].self .message-text,
+.message-app .message.self .message-text {
+  background: var(--card-h) !important;
+  border-color: var(--border-h) !important;
+}
+
+/* Message input area */
+[data-region="view-conversation"] .send-message-txt,
+.message-app .send-message-txt {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: var(--r-sm) !important;
+  padding: 10px 14px !important;
+  font-family: var(--font) !important;
+  font-size: 13.5px !important;
+  resize: none !important;
+  transition: border-color .15s ease !important;
+}
+[data-region="view-conversation"] .send-message-txt:focus,
+.message-app .send-message-txt:focus {
+  border-color: var(--accent) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px var(--accent-s) !important;
+}
+
+/* Message footer send bar */
+[data-region="view-conversation"] .message-send-area,
+.message-app .message-send-area {
+  background: var(--surface) !important;
+  border-top: 1px solid var(--border) !important;
+  padding: 12px 16px !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  NAV DRAWER INTERIOR (#nav-drawer)
+   ══════════════════════════════════════════════════════════ */
+
+body:not(.pagelayout-frontpage) #nav-drawer {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  top: var(--header-h) !important;
+}
+
+/* Drawer navigation items */
+#nav-drawer .list-group-item,
+#nav-drawer [data-key] {
+  background: transparent !important;
+  color: var(--text) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border) !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  padding: 10px 16px !important;
+  transition: var(--t) !important;
+}
+#nav-drawer .list-group-item:hover,
+#nav-drawer [data-key]:hover {
+  background: var(--card-h) !important;
+  color: var(--accent) !important;
+}
+#nav-drawer .list-group-item.active,
+#nav-drawer [data-key].active {
+  background: var(--card-h) !important;
+  border-left: 2px solid var(--accent) !important;
+  color: var(--accent) !important;
+  font-weight: 600 !important;
+}
+
+/* Drawer section headings */
+#nav-drawer .nav-section-header,
+#nav-drawer [role="heading"] {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  color: var(--muted) !important;
+  padding: 14px 16px 6px !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  BOOTSTRAP ALERTS (zinc/shadcn theming)
+   ══════════════════════════════════════════════════════════ */
+
+.alert {
+  font-family: var(--font) !important;
+  font-size: 13.5px !important;
+  border-radius: var(--r-md) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  padding: 12px 16px !important;
+}
+
+/* Override each Bootstrap alert variant with zinc tokens */
+.alert-info,
+.alert-primary {
+  background: var(--card-h) !important;
+  border-color: var(--border-h) !important;
+  color: var(--text) !important;
+}
+
+.alert-success {
+  background: rgba(62, 207, 142, 0.08) !important;
+  border-color: rgba(62, 207, 142, 0.3) !important;
+  color: var(--green) !important;
+}
+
+.alert-warning {
+  background: rgba(245, 158, 11, 0.08) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  color: #f59e0b !important;
+}
+
+.alert-danger,
+.alert-error {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #ef4444 !important;
+}
+
+.alert-dismissible .close,
+.alert .btn-close {
+  color: var(--sub) !important;
+  opacity: .7 !important;
+  transition: opacity .15s ease !important;
+}
+.alert-dismissible .close:hover,
+.alert .btn-close:hover { opacity: 1 !important; }
+
+/* Light mode alert overrides */
+:root.nh-light .alert-info,
+:root.nh-light .alert-primary { background: #f4f4f5 !important; border-color: var(--border) !important; color: var(--text) !important; }
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  TOOLTIPS
+   ══════════════════════════════════════════════════════════ */
+
+.tooltip-inner {
+  background: var(--card-h) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  font-family: var(--font) !important;
+  font-size: 12px !important;
+  border-radius: var(--r-sm) !important;
+  padding: 5px 10px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.tooltip .arrow::before,
+.bs-tooltip-top .arrow::before { border-top-color: var(--border) !important; }
+.bs-tooltip-bottom .arrow::before { border-bottom-color: var(--border) !important; }
+.bs-tooltip-left .arrow::before  { border-left-color: var(--border) !important; }
+.bs-tooltip-right .arrow::before { border-right-color: var(--border) !important; }
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  UPCOMING EVENTS / TIMELINE BLOCK (dashboard)
+   ══════════════════════════════════════════════════════════ */
+
+[data-region="event-list-container"],
+.block_timeline {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Individual event item */
+[data-region="event-list-container"] [data-region="event-list-item"],
+.block_timeline .event-list-item {
+  background: transparent !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 12px 16px !important;
+  transition: background .15s ease !important;
+}
+[data-region="event-list-container"] [data-region="event-list-item"]:last-child,
+.block_timeline .event-list-item:last-child { border-bottom: none !important; }
+[data-region="event-list-container"] [data-region="event-list-item"]:hover,
+.block_timeline .event-list-item:hover { background: var(--card-h) !important; }
+
+/* Event item name */
+.block_timeline .event-name,
+[data-region="event-list-container"] .event-name {
+  color: var(--text) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+}
+.block_timeline .event-name:hover,
+[data-region="event-list-container"] .event-name:hover { color: var(--accent) !important; }
+
+/* Event date badge */
+.block_timeline .date-header,
+[data-region="event-list-container"] .date-header {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .06em !important;
+  color: var(--muted) !important;
+  padding: 10px 16px 4px !important;
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* Due date countdown */
+.block_timeline .event-due,
+[data-region="event-list-container"] .event-due { color: var(--sub) !important; font-size: 12px !important; }
+
+/* Overdue highlight */
+.block_timeline .event-overdue,
+[data-region="event-list-container"] .overdue {
+  color: #ef4444 !important;
+  font-weight: 600 !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  PAGINATION (global)
+   ══════════════════════════════════════════════════════════ */
+
+.pagination .page-item .page-link {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--sub) !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  transition: var(--t) !important;
+  padding: 6px 12px !important;
+}
+.pagination .page-item .page-link:hover {
+  background: var(--card-h) !important;
+  color: var(--accent) !important;
+  border-color: var(--border-h) !important;
+}
+.pagination .page-item.active .page-link {
+  background: var(--accent) !important;
+  color: var(--bg) !important;
+  border-color: var(--accent) !important;
+  font-weight: 700 !important;
+}
+.pagination .page-item.disabled .page-link { opacity: .4 !important; cursor: not-allowed !important; }
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  PROGRESS BARS (completion indicators)
+   ══════════════════════════════════════════════════════════ */
+
+.progress {
+  background: var(--card-h) !important;
+  border-radius: 999px !important;
+  height: 6px !important;
+  overflow: hidden !important;
+}
+.progress-bar {
+  background: var(--accent) !important;
+  border-radius: 999px !important;
+  transition: width .4s ease !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  ACTIVITY COMPLETION ICONS (checkmarks)
+   ══════════════════════════════════════════════════════════ */
+
+.completioncheckbox,
+.autocompletion,
+.completion-info span,
+[data-action="toggle-manual-completion"] {
+  color: var(--sub) !important;
+  transition: color .15s ease !important;
+}
+.completioncheckbox.completion-y,
+[data-action="toggle-manual-completion"].btn-success { color: var(--green) !important; }
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  SEARCH RESULTS PAGE
+   ══════════════════════════════════════════════════════════ */
+
+.search-result-item,
+[data-region="search-result"] {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  padding: 16px 20px !important;
+  margin-bottom: 12px !important;
+  box-shadow: var(--shadow) !important;
+  transition: background .15s ease !important;
+}
+.search-result-item:hover,
+[data-region="search-result"]:hover { background: var(--card-h) !important; }
+
+.search-result-item h3,
+.search-result-item .result-title a,
+[data-region="search-result"] .result-title a {
+  color: var(--text) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  text-decoration: none !important;
+}
+.search-result-item .result-title a:hover,
+[data-region="search-result"] .result-title a:hover { color: var(--accent) !important; }
+
+.search-result-item .result-context,
+[data-region="search-result"] .result-context { color: var(--muted) !important; font-size: 12px !important; }
+
+.search-result-item .result-content,
+[data-region="search-result"] .result-content { color: var(--sub) !important; font-size: 13px !important; margin-top: 6px !important; }
+

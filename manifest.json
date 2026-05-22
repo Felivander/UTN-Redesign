@@ -7,6 +7,11 @@
   "content_scripts": [
     {
       "matches": ["*://frcon.cvg.utn.edu.ar/*"],
+      "js": ["scripts/init.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["*://frcon.cvg.utn.edu.ar/*"],
       "css": ["styles/main.css"],
       "js": ["scripts/inject.js"],
       "run_at": "document_end"
