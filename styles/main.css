@@ -278,14 +278,14 @@ svg.lucide polygon,
 
 /* Login button */
 .nh-login-btn {
-  background: var(--accent) !important; color: #fff !important;
+  background: var(--accent) !important; color: var(--bg) !important;
   border: none !important; border-radius: var(--r-sm) !important;
   padding: 8px 18px !important; font-size: 13px !important; font-weight: 600 !important;
   font-family: var(--font) !important; cursor: pointer !important;
   white-space: nowrap !important; flex-shrink: 0;
   transition: var(--t) !important; text-decoration: none !important;
 }
-.nh-login-btn:hover { opacity: .88 !important; color: #fff !important; }
+.nh-login-btn:hover { opacity: .88 !important; color: var(--bg) !important; }
 
 /* ══ HERO (solo front page, no logueado) ════════════════ */
 #nhood-hero {
@@ -778,6 +778,73 @@ body:not(.pagelayout-frontpage) .subcategories .categoryname a:hover {
 body:not(.pagelayout-frontpage) .subcategories .category .info {
   padding-left: 0 !important;
   background: none !important;
+}
+
+/* ── Moodle Native Category Tree Overrides (.course_category_tree) ── */
+/* Prevents nested category folders from rendering in cramped flex grids */
+
+body:not(.pagelayout-frontpage) .course_category_tree .subcategories {
+  display: block !important;
+  grid-template-columns: none !important;
+  gap: 0 !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+}
+
+body:not(.pagelayout-frontpage) .course_category_tree .category {
+  display: block !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+body:not(.pagelayout-frontpage) .course_category_tree .category:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Style the expandable category headers as low-profile clean bars */
+body:not(.pagelayout-frontpage) .course_category_tree .category > .info {
+  display: flex !important;
+  align-items: center !important;
+  padding: 10px 14px !important;
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  margin-bottom: 8px !important;
+  transition: var(--t) !important;
+}
+
+body:not(.pagelayout-frontpage) .course_category_tree .category > .info:hover {
+  background-color: var(--card-h) !important;
+  border-color: var(--border-h) !important;
+}
+
+body:not(.pagelayout-frontpage) .course_category_tree .categoryname {
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+}
+
+body:not(.pagelayout-frontpage) .course_category_tree .categoryname a {
+  color: var(--text) !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+/* Elegant indentation and indicator lines for child lists */
+body:not(.pagelayout-frontpage) .course_category_tree .category > .content {
+  padding-left: 20px !important;
+  border-left: 1px dashed var(--border) !important;
+  margin-left: 20px !important;
+  margin-top: 6px !important;
+  margin-bottom: 12px !important;
 }
 
 /* Fix pagination inside subcategories grid layout */
@@ -2789,9 +2856,9 @@ body.pagelayout-course #nhood-course-layout {
   margin: 0 !important;
 }
 
-/* Modern Segmented Tab Controls (shadcn/ui Tabs Style) for Course pages */
-body.pagelayout-course .moremenu,
-body.pagelayout-course .secondary-navigation {
+/* Modern Segmented Tab Controls (shadcn/ui Tabs Style) for Course pages (Consistent across all subpages) */
+body .moremenu,
+body .secondary-navigation {
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
@@ -2799,11 +2866,11 @@ body.pagelayout-course .secondary-navigation {
   box-shadow: none !important;
 }
 
-body.pagelayout-course .moremenu .nav-pills,
-body.pagelayout-course .moremenu .nav-tabs,
-body.pagelayout-course .secondary-navigation .nav-tabs,
-body.pagelayout-course .nav-pills,
-body.pagelayout-course .nav-tabs {
+body .moremenu .nav-pills,
+body .moremenu .nav-tabs,
+body .secondary-navigation .nav-tabs,
+body .nav-pills,
+body .nav-tabs {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
@@ -2816,20 +2883,20 @@ body.pagelayout-course .nav-tabs {
   border-bottom: 1px solid var(--border) !important;
 }
 
-body.pagelayout-course .moremenu .nav-pills .nav-item,
-body.pagelayout-course .moremenu .nav-tabs .nav-item,
-body.pagelayout-course .secondary-navigation .nav-tabs .nav-item,
-body.pagelayout-course .nav-pills .nav-item,
-body.pagelayout-course .nav-tabs .nav-item {
+body .moremenu .nav-pills .nav-item,
+body .moremenu .nav-tabs .nav-item,
+body .secondary-navigation .nav-tabs .nav-item,
+body .nav-pills .nav-item,
+body .nav-tabs .nav-item {
   margin: 0 !important;
   list-style: none !important;
 }
 
-body.pagelayout-course .moremenu .nav-pills .nav-link,
-body.pagelayout-course .moremenu .nav-tabs .nav-link,
-body.pagelayout-course .secondary-navigation .nav-tabs .nav-link,
-body.pagelayout-course .nav-pills .nav-link,
-body.pagelayout-course .nav-tabs .nav-link {
+body .moremenu .nav-pills .nav-link,
+body .moremenu .nav-tabs .nav-link,
+body .secondary-navigation .nav-tabs .nav-link,
+body .nav-pills .nav-link,
+body .nav-tabs .nav-link {
   background: transparent !important;
   border: none !important;
   border-bottom: none !important;
@@ -2844,36 +2911,36 @@ body.pagelayout-course .nav-tabs .nav-link {
   cursor: pointer !important;
 }
 
-body.pagelayout-course .moremenu .nav-pills .nav-link::after,
-body.pagelayout-course .moremenu .nav-tabs .nav-link::after,
-body.pagelayout-course .secondary-navigation .nav-tabs .nav-link::after,
-body.pagelayout-course .nav-pills .nav-link::after,
-body.pagelayout-course .nav-tabs .nav-link::after {
+body .moremenu .nav-pills .nav-link::after,
+body .moremenu .nav-tabs .nav-link::after,
+body .secondary-navigation .nav-tabs .nav-link::after,
+body .nav-pills .nav-link::after,
+body .nav-tabs .nav-link::after {
   display: none !important;
   content: none !important;
 }
 
-body.pagelayout-course .moremenu .nav-pills .nav-link:hover,
-body.pagelayout-course .moremenu .nav-tabs .nav-link:hover,
-body.pagelayout-course .secondary-navigation .nav-tabs .nav-link:hover,
-body.pagelayout-course .nav-pills .nav-link:hover,
-body.pagelayout-course .nav-tabs .nav-link:hover {
+body .moremenu .nav-pills .nav-link:hover,
+body .moremenu .nav-tabs .nav-link:hover,
+body .secondary-navigation .nav-tabs .nav-link:hover,
+body .nav-pills .nav-link:hover,
+body .nav-tabs .nav-link:hover {
   color: var(--text) !important;
   background: var(--card-h) !important;
   border: none !important;
   border-bottom: none !important;
 }
 
-body.pagelayout-course .moremenu .nav-pills .nav-link.active,
-body.pagelayout-course .moremenu .nav-tabs .nav-link.active,
-body.pagelayout-course .secondary-navigation .nav-tabs .nav-link.active,
-body.pagelayout-course .nav-pills .nav-link.active,
-body.pagelayout-course .nav-tabs .nav-link.active,
-body.pagelayout-course .moremenu .nav-pills .nav-link[aria-selected="true"],
-body.pagelayout-course .moremenu .nav-tabs .nav-link[aria-selected="true"],
-body.pagelayout-course .secondary-navigation .nav-tabs .nav-link[aria-selected="true"],
-body.pagelayout-course .nav-pills .nav-link[aria-selected="true"],
-body.pagelayout-course .nav-tabs .nav-link[aria-selected="true"] {
+body .moremenu .nav-pills .nav-link.active,
+body .moremenu .nav-tabs .nav-link.active,
+body .secondary-navigation .nav-tabs .nav-link.active,
+body .nav-pills .nav-link.active,
+body .nav-tabs .nav-link.active,
+body .moremenu .nav-pills .nav-link[aria-selected="true"],
+body .moremenu .nav-tabs .nav-link[aria-selected="true"],
+body .secondary-navigation .nav-tabs .nav-link[aria-selected="true"],
+body .nav-pills .nav-link[aria-selected="true"],
+body .nav-tabs .nav-link[aria-selected="true"] {
   background: var(--card) !important;
   color: var(--text) !important;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06) !important;
@@ -2882,19 +2949,19 @@ body.pagelayout-course .nav-tabs .nav-link[aria-selected="true"] {
 }
 
 /* Un-collapse Moodle's "Más" (More) dropdown into a horizontal row of navigation tabs */
-body.pagelayout-course .moremenu .nav-tabs .dropdownmoremenu,
-body.pagelayout-course .moremenu .nav-pills .dropdownmoremenu,
-body.pagelayout-course .secondary-navigation .dropdownmoremenu {
+body .moremenu .nav-tabs .dropdownmoremenu,
+body .moremenu .nav-pills .dropdownmoremenu,
+body .secondary-navigation .dropdownmoremenu {
   display: contents !important;
 }
 
-body.pagelayout-course .moremenu .dropdown-toggle,
-body.pagelayout-course .secondary-navigation .dropdown-toggle {
+body .moremenu .dropdown-toggle,
+body .secondary-navigation .dropdown-toggle {
   display: none !important; /* Hide "Más" trigger button */
 }
 
-body.pagelayout-course .moremenu .dropdown-menu,
-body.pagelayout-course .secondary-navigation .dropdown-menu {
+body .moremenu .dropdown-menu,
+body .secondary-navigation .dropdown-menu {
   position: static !important;
   display: inline-flex !important; /* Force to show as inline-flex items */
   flex-direction: row !important;
@@ -2910,8 +2977,8 @@ body.pagelayout-course .secondary-navigation .dropdown-menu {
   min-width: 0 !important;
 }
 
-body.pagelayout-course .moremenu .dropdown-menu .dropdown-item,
-body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item {
+body .moremenu .dropdown-menu .dropdown-item,
+body .secondary-navigation .dropdown-menu .dropdown-item {
   background: transparent !important;
   border: none !important;
   border-radius: var(--r-sm) !important;
@@ -2930,26 +2997,26 @@ body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item {
   line-height: inherit !important;
 }
 
-body.pagelayout-course .moremenu .dropdown-menu .dropdown-item:hover,
-body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item:hover {
+body .moremenu .dropdown-menu .dropdown-item:hover,
+body .secondary-navigation .dropdown-menu .dropdown-item:hover {
   color: var(--text) !important;
   background: var(--card-h) !important;
 }
 
-body.pagelayout-course .moremenu .dropdown-menu .dropdown-item.active,
-body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item.active,
-body.pagelayout-course .moremenu .dropdown-menu .dropdown-item[aria-selected="true"],
-body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item[aria-selected="true"] {
+body .moremenu .dropdown-menu .dropdown-item.active,
+body .secondary-navigation .dropdown-menu .dropdown-item.active,
+body .moremenu .dropdown-menu .dropdown-item[aria-selected="true"],
+body .secondary-navigation .dropdown-menu .dropdown-item[aria-selected="true"] {
   background: var(--card) !important;
   color: var(--text) !important;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06) !important;
 }
 
 /* Hide active checkmarks/icons inside the collapsed dropdown menu items to look like clean tabs */
-body.pagelayout-course .moremenu .dropdown-menu .dropdown-item i,
-body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item i,
-body.pagelayout-course .moremenu .dropdown-menu .dropdown-item::before,
-body.pagelayout-course .secondary-navigation .dropdown-menu .dropdown-item::before {
+body .moremenu .dropdown-menu .dropdown-item i,
+body .secondary-navigation .dropdown-menu .dropdown-item i,
+body .moremenu .dropdown-menu .dropdown-item::before,
+body .secondary-navigation .dropdown-menu .dropdown-item::before {
   display: none !important;
 }
 
@@ -3583,71 +3650,193 @@ table.calendartable td.weekend { background: var(--bg) !important; }
    ██████  PARTICIPANTS / USER LIST (/user/index.php)
    ══════════════════════════════════════════════════════════ */
 
-/* Participants toolbar */
+/* Participants toolbar / Filter container */
 #participants-toolbar,
 [data-region="participants-filter"] {
-  background: var(--card) !important;
+  background: var(--surface) !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--r-md) !important;
-  padding: 14px 18px !important;
-  margin-bottom: 20px !important;
+  padding: 18px 22px !important;
+  margin-bottom: 24px !important;
   box-shadow: var(--shadow) !important;
 }
 
-/* Participants table wrapper */
+/* Custom styles for select and inputs in filter bar */
+#participants-toolbar select,
+[data-region="participants-filter"] select,
+#participants-toolbar input,
+[data-region="participants-filter"] input {
+  background-color: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: var(--r-sm) !important;
+  padding: 6px 12px !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  transition: var(--t) !important;
+}
+#participants-toolbar select:focus,
+[data-region="participants-filter"] select:focus,
+#participants-toolbar input:focus,
+[data-region="participants-filter"] input:focus {
+  border-color: var(--accent) !important;
+  outline: none !important;
+}
+
+/* Segmented Control Initials Bar (Alphabet buttons) */
+.initialsbar {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin-bottom: 16px !important;
+  padding: 6px 0 !important;
+}
+.initialsbar .initialsbarall,
+.initialsbar .initialsbar-list {
+  display: inline-flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+.initialsbar .initialsbar-list li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.initialsbar a,
+.initialsbar span,
+.initialsbar .initialsbarall a,
+.initialsbar .initialsbar-list a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  padding: 0 6px !important;
+  border-radius: var(--r-sm) !important;
+  border: 1px solid var(--border) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--sub) !important;
+  text-decoration: none !important;
+  background: var(--card) !important;
+  transition: var(--t) !important;
+  cursor: pointer !important;
+  text-transform: uppercase !important;
+}
+.initialsbar a:hover,
+.initialsbar .initialsbarall a:hover,
+.initialsbar .initialsbar-list a:hover {
+  background: var(--card-h) !important;
+  color: var(--text) !important;
+  border-color: var(--border-h) !important;
+}
+.initialsbar .active,
+.initialsbar span.active,
+.initialsbar a.active,
+.initialsbar .initialsbar-list .active a,
+.initialsbar .initialsbarall.active a {
+  background: var(--text) !important;
+  color: var(--bg) !important;
+  border-color: var(--text) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15) !important;
+}
+
+/* Participants table wrapper - modern transparent list layout */
 #participants,
 [data-region="participants"] {
-  background: var(--card) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: var(--r-md) !important;
-  overflow: hidden !important;
-  box-shadow: var(--shadow) !important;
-}
-
-/* Table header */
-#participants table thead th,
-[data-region="participants"] table thead th {
-  background: var(--surface) !important;
-  color: var(--sub) !important;
-  font-family: var(--font) !important;
-  font-weight: 700 !important;
-  font-size: 11px !important;
-  text-transform: uppercase !important;
-  letter-spacing: .06em !important;
-  border-bottom: 1px solid var(--border) !important;
-  padding: 12px 16px !important;
-}
-
-/* Table rows */
-#participants table tbody tr,
-[data-region="participants"] table tbody tr {
-  border-bottom: 1px solid var(--border) !important;
-  transition: background .15s ease !important;
-}
-#participants table tbody tr:last-child,
-[data-region="participants"] table tbody tr:last-child { border-bottom: none !important; }
-#participants table tbody tr:hover,
-[data-region="participants"] table tbody tr:hover { background: var(--card-h) !important; }
-
-/* Table cells */
-#participants table tbody td,
-[data-region="participants"] table tbody td {
-  padding: 12px 16px !important;
-  color: var(--text) !important;
-  font-size: 13.5px !important;
-  vertical-align: middle !important;
+  background: transparent !important;
   border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+/* Floating Card Table Layout */
+#participants table,
+[data-region="participants"] table {
+  border-collapse: separate !important;
+  border-spacing: 0 8px !important; /* Visual separation of rows as cards */
+  width: 100% !important;
   background: transparent !important;
 }
 
-/* Participant avatar */
+/* Table header - clean low-profile label row */
+#participants table thead th,
+[data-region="participants"] table thead th {
+  background: transparent !important;
+  color: var(--muted) !important;
+  font-family: var(--font) !important;
+  font-weight: 700 !important;
+  font-size: 10.5px !important;
+  text-transform: uppercase !important;
+  letter-spacing: .08em !important;
+  border: none !important;
+  padding: 8px 16px !important;
+}
+
+/* Floating card rows */
+#participants table tbody tr,
+[data-region="participants"] table tbody tr {
+  background: transparent !important;
+  transition: var(--t) !important;
+}
+
+/* Body cells - build the card container on cells */
+#participants table tbody td,
+[data-region="participants"] table tbody td {
+  padding: 16px 20px !important;
+  color: var(--text) !important;
+  font-size: 13.5px !important;
+  vertical-align: middle !important;
+  border-top: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--border) !important;
+  background-color: var(--card) !important;
+  transition: var(--t) !important;
+}
+
+/* Left side of the card row */
+#participants table tbody td:first-child,
+[data-region="participants"] table tbody td:first-child {
+  border-top-left-radius: var(--r-md) !important;
+  border-bottom-left-radius: var(--r-md) !important;
+  border-left: 1px solid var(--border) !important;
+}
+
+/* Right side of the card row */
+#participants table tbody td:last-child,
+[data-region="participants"] table tbody td:last-child {
+  border-top-right-radius: var(--r-md) !important;
+  border-bottom-right-radius: var(--r-md) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+/* Row card hovers */
+#participants table tbody tr:hover td,
+[data-region="participants"] table tbody tr:hover td {
+  background-color: var(--card-h) !important;
+  border-color: var(--border-h) !important;
+}
+#participants table tbody tr:hover td:first-child,
+[data-region="participants"] table tbody tr:hover td:first-child {
+  border-left-color: var(--border-h) !important;
+}
+#participants table tbody tr:hover td:last-child,
+[data-region="participants"] table tbody tr:hover td:last-child {
+  border-right-color: var(--border-h) !important;
+}
+
+/* Participant avatar with subtle ring */
 #participants .userpicture,
 [data-region="participants"] .userpicture {
-  width: 32px !important;
-  height: 32px !important;
+  width: 36px !important;
+  height: 36px !important;
   border-radius: 50% !important;
   object-fit: cover !important;
-  border: 1px solid var(--border) !important;
+  border: 2px solid var(--border-h) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
 }
 
 /* Participant name link */
@@ -3659,23 +3848,29 @@ table.calendartable td.weekend { background: var(--bg) !important; }
   transition: color .15s ease !important;
 }
 #participants .fullname a:hover,
-[data-region="participants"] .fullname a:hover { color: var(--accent) !important; }
+[data-region="participants"] .fullname a:hover {
+  color: var(--accent) !important;
+}
 
 /* Role badge */
 #participants .badge,
 [data-region="participants"] .badge {
-  background: var(--card-h) !important;
+  background: var(--surface) !important;
   color: var(--sub) !important;
   border: 1px solid var(--border) !important;
-  border-radius: 999px !important;
-  font-size: 10.5px !important;
-  font-weight: 600 !important;
-  padding: 2px 8px !important;
+  border-radius: 6px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 3px 8px !important;
 }
 
 /* Participants footer / pagination */
 #participants .pagination,
-[data-region="participants"] .pagination { margin-top: 16px !important; }
+[data-region="participants"] .pagination {
+  margin-top: 20px !important;
+}
 
 
 /* ══════════════════════════════════════════════════════════
@@ -4059,4 +4254,113 @@ body:not(.pagelayout-frontpage) #nav-drawer {
 
 .search-result-item .result-content,
 [data-region="search-result"] .result-content { color: var(--sub) !important; font-size: 13px !important; margin-top: 6px !important; }
+
+
+/* ══════════════════════════════════════════════════════════
+   ██████  AUDIT SWEEP & BOOTSTRAP BLEED OVERRIDES (Visual Audit Fixes)
+   ══════════════════════════════════════════════════════════ */
+
+/* Global card overrides in dark mode */
+body:not(.nh-light) .card,
+body:not(.nh-light) .card-body,
+body:not(.nh-light) .course-section,
+body:not(.nh-light) .section,
+body:not(.nh-light) .coursebox,
+body:not(.nh-light) .well,
+body:not(.nh-light) .card-header,
+body:not(.nh-light) .card-footer {
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Bootstrap background utility overrides */
+body:not(.nh-light) .bg-white,
+body:not(.nh-light) .bg-light,
+body:not(.nh-light) .bg-default {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* More menu / tab wrappers */
+body:not(.nh-light) .moremenu,
+body:not(.nh-light) .nav-tabs,
+body:not(.nh-light) .nav-tabs .nav-link,
+body:not(.nh-light) .moremenu .nav-link,
+body:not(.nh-light) .dropdownmoremenu {
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--sub) !important;
+}
+body:not(.nh-light) .nav-tabs .nav-link.active,
+body:not(.nh-light) .moremenu .nav-link.active {
+  background-color: var(--card-h) !important;
+  color: var(--text) !important;
+  border-color: var(--accent) !important;
+}
+
+/* Table zebra striping & cell colors */
+body:not(.nh-light) table,
+body:not(.nh-light) .table,
+body:not(.nh-light) tr,
+body:not(.nh-light) td,
+body:not(.nh-light) th,
+body:not(.nh-light) .table td,
+body:not(.nh-light) .table th {
+  background-color: var(--card) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+body:not(.nh-light) .table-striped tbody tr:nth-of-type(odd),
+body:not(.nh-light) .table-striped tbody tr:nth-of-type(even) {
+  background-color: var(--card) !important;
+  color: var(--text) !important;
+}
+body:not(.nh-light) .table-striped tbody tr:nth-of-type(even) {
+  background-color: var(--surface) !important;
+}
+body:not(.nh-light) .table-striped tbody tr:hover,
+body:not(.nh-light) .table tbody tr:hover,
+body:not(.nh-light) tr:hover td {
+  background-color: var(--card-h) !important;
+}
+
+/* Gradebook & submissions */
+body:not(.nh-light) .path-mod-assign .submissionstatustable,
+body:not(.nh-light) .path-mod-assign .feedbacktable,
+body:not(.nh-light) .gradereport-user-table,
+body:not(.nh-light) table.user-grade {
+  background-color: var(--card) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Messaging panels */
+body:not(.nh-light) .message-app,
+body:not(.nh-light) [data-region="message-drawer"],
+body:not(.nh-light) .message-app .conversations,
+body:not(.nh-light) [data-region="view-overview"],
+body:not(.nh-light) .message-app .messages-container,
+body:not(.nh-light) [data-region="view-conversation"] {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
+body:not(.nh-light) .message-app .bg-white,
+body:not(.nh-light) [data-region="message-drawer"] .bg-white {
+  background-color: var(--surface) !important;
+}
+body:not(.nh-light) .message-app .border,
+body:not(.nh-light) [data-region="message-drawer"] .border {
+  border-color: var(--border) !important;
+}
+
+/* Filter boxes and toolbars */
+body:not(.nh-light) .filter-box,
+body:not(.nh-light) .tertiary-navigation,
+body:not(.nh-light) .initialsbar {
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
 
