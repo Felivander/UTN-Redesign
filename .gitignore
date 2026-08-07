@@ -1,0 +1,5 @@
+playwright_user_data/
+diag_out/
+__pycache__/
+*.csv
+.agents/
