@@ -129,6 +129,22 @@
 html {
   background: var(--bg) !important;
   min-height: 100% !important;
+  height: auto !important;
+}
+/* `body.uses-drawers` de Adaptable cierra body a la altura del viewport
+   con scroll propio (pensado para que sólo #page.drawers scrollee
+   internamente). Medido: document.documentElement.scrollHeight quedaba
+   fijo en el alto del viewport en TODAS las páginas logueadas, mientras
+   body.scrollHeight sí crecía con el contenido real — o sea, dos cajas
+   de scroll independientes. Nuestro footer, como último hijo de body,
+   terminaba pegado al borde de esa caja de 900px en vez de aparecer
+   después del contenido, y el scroll de la ventana (que mueve <html>)
+   no lo movía. Se devuelve el scroll al documento completo. */
+body.uses-drawers, html body {
+  height: auto !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  overflow-y: visible !important;
 }
 body {
   margin: 0 !important;
@@ -222,13 +238,24 @@ html body .skip-block-to {
 }
 
 /* Los drawers de navegación y de bloques sí se ocultan (su contenido se
-   reubica en el header, el sheet y el rail), pero el drawer de mensajería
-   NO: en Moodle 4 la mensajería es un drawer, no un popover. Ocultarlo
-   junto con los demás hacía que el botón de Mensajes no mostrara nada. */
-html body #page-wrapper > .drawer:not([data-region="message-drawer"]),
+   reubica en el header, el sheet y el rail), pero el de mensajería NO.
+
+   La exclusión estaba puesta en el elemento equivocado. El marcado real
+   del campus (verificado con diag_logged_in.py) es:
+
+     <div id="drawer-6a87…" class="drawer bg-white hidden">   ← Moodle abre acá
+       <div data-region="message-drawer" class="message-app">  ← se excluía acá
+
+   `data-region` y `.message-app` viven en el HIJO, así que el PADRE —el
+   que Moodle realmente muestra y oculta— caía igual en el kill global.
+   El botón llamaba bien a Moodle, Moodle le sacaba `hidden`, y este
+   `display:none !important` lo dejaba invisible igual.
+
+   Por eso se excluye por contenido (`:has`), no por clase propia. */
+html body #page-wrapper > .drawer:not(:has([data-region="message-drawer"])),
 html body .drawer-toggles,
 html body .drawer-toggler,
-html body .drawer:not([data-region="message-drawer"]):not(.message-app) {
+html body .drawer:not(:has([data-region="message-drawer"])):not([data-region="message-drawer"]):not(.message-app) {
   display: none !important;
   visibility: hidden !important;
 }
@@ -504,12 +531,10 @@ svg.lucide polygon,
   flex-shrink: 0; cursor: pointer !important;
 }
 .nh-nav-link:hover { color: var(--text) !important; background: var(--card-h) !important; }
-/* El estado activo se marca con color Y con una barra: el color solo
-   no alcanza para quien no lo distingue. */
-.nh-nav-link.active {
-  color: var(--text) !important; background: var(--accent-q) !important;
-  box-shadow: inset 0 -2px 0 var(--accent);
-}
+/* Sobrio: sólo cambia el color del texto, igual que el resto de los
+   controles del header (el botón de menú, por ejemplo). Nada de
+   negrita ni barra — eso volvía a leerse como una pill genérica. */
+.nh-nav-link.active { color: var(--text) !important; }
 .nh-menu-trigger[aria-expanded="true"] { color: var(--text) !important; background: var(--card-h) !important; }
 
 /* ── Paneles desplegables (menú "Más" y menú de usuario) ── */
@@ -992,10 +1017,16 @@ body:not(.pagelayout-frontpage) .section-title a {
 /* Cards de módulos */
 body:not(.pagelayout-frontpage) .card {
   background: var(--card) !important; border: 1px solid var(--border) !important;
+  border-top: 1px solid var(--border) !important;
   border-radius: var(--r-md) !important; color: var(--text) !important;
 }
 body:not(.pagelayout-frontpage) .card-header {
   background: var(--card-h) !important; border-bottom: 1px solid var(--border) !important;
+  /* Adaptable pinta una franja de acento arriba de cada card-header
+     (el filo celeste sobre "Línea de tiempo", "Calendario"…). El
+     `border: 1px solid --border` del padre no lo alcanza porque vive
+     en el propio header, no en el contenedor. */
+  border-top: none !important;
   color: var(--text) !important;
 }
 body:not(.pagelayout-frontpage) .card-body { color: var(--text) !important; }
@@ -1029,26 +1060,93 @@ body:not(.pagelayout-frontpage) input[type="radio"] {
   cursor: pointer !important;
 }
 
-/* Botones de Moodle en páginas internas */
-body:not(.pagelayout-frontpage) .btn-primary {
-  background: var(--accent) !important; border-color: var(--accent) !important;
-  color: var(--bg) !important; font-family: var(--font) !important; border-radius: var(--r-sm) !important;
+/* ══ BOTONES Y COLOR CONTEXTUAL DE BOOTSTRAP 4 (Adaptable) ══
+   Bootstrap 4 no usa custom properties para sus colores: cada variante
+   contextual (.btn-primary, .btn-info, .badge-danger…) trae el valor
+   ya compilado en el CSS del tema. En vez de ir cazando una variante
+   por reporte (así apareció el teal de "Próximos 7 días" o el violeta
+   de "Nuevo evento"), se neutraliza acá TODA la superficie de clases
+   contextuales de una sola vez: 8 colores × sólido/outline, más badges
+   y alerts. Ningún botón de Moodle queda con su color de fábrica.
+
+   La acción principal (antes .btn-primary con relleno sólido en
+   --accent) pasa a "acento sin relleno": fondo neutro, borde y texto
+   en --accent. El acento posee color de sobra para leerse como CTA sin
+   convertirse en una pill violeta plana. */
+body:not(.pagelayout-frontpage) .btn.btn-primary,
+body:not(.pagelayout-frontpage) .btn.btn-outline-primary {
+  background: var(--card) !important; border-color: var(--accent) !important;
+  color: var(--accent) !important; font-family: var(--font) !important; font-weight: 600 !important;
+  border-radius: var(--r-sm) !important;
 }
-body:not(.pagelayout-frontpage) .btn-secondary,
-body:not(.pagelayout-frontpage) .btn-default {
+body:not(.pagelayout-frontpage) .btn.btn-primary:hover,
+body:not(.pagelayout-frontpage) .btn.btn-outline-primary:hover {
+  background: var(--accent-q) !important;
+}
+
+/* Peligro/éxito conservan su semántica (confirmar borrado, guardado
+   correcto) en vez de aplanarse a gris: la acción sigue siendo legible
+   sin depender sólo del texto del botón. */
+body:not(.pagelayout-frontpage) .btn.btn-danger,
+body:not(.pagelayout-frontpage) .btn.btn-outline-danger {
+  background: var(--card) !important; border-color: var(--danger) !important;
+  color: var(--danger) !important; font-family: var(--font) !important; border-radius: var(--r-sm) !important;
+}
+body:not(.pagelayout-frontpage) .btn.btn-danger:hover,
+body:not(.pagelayout-frontpage) .btn.btn-outline-danger:hover {
+  background: color-mix(in oklab, var(--danger) 14%, transparent) !important;
+}
+body:not(.pagelayout-frontpage) .btn.btn-success,
+body:not(.pagelayout-frontpage) .btn.btn-outline-success {
+  background: var(--card) !important; border-color: var(--success) !important;
+  color: var(--success) !important; font-family: var(--font) !important; border-radius: var(--r-sm) !important;
+}
+body:not(.pagelayout-frontpage) .btn.btn-success:hover,
+body:not(.pagelayout-frontpage) .btn.btn-outline-success:hover {
+  background: color-mix(in oklab, var(--success) 14%, transparent) !important;
+}
+
+body:not(.pagelayout-frontpage) .btn:not(.nh-nav-link):not(.nh-login-btn):not(.nh-cmdk):not([id^="nh-"]):not(.btn-primary):not(.btn-outline-primary):not(.btn-danger):not(.btn-outline-danger):not(.btn-success):not(.btn-outline-success) {
   background: var(--card) !important; border-color: var(--border) !important;
   color: var(--text) !important; font-family: var(--font) !important; border-radius: var(--r-sm) !important;
 }
+body:not(.pagelayout-frontpage) .btn:not(.nh-nav-link):not(.nh-login-btn):not(.nh-cmdk):not([id^="nh-"]):not(.btn-primary):not(.btn-outline-primary):not(.btn-danger):not(.btn-outline-danger):not(.btn-success):not(.btn-outline-success):hover {
+  background: var(--card-h) !important; border-color: var(--border-h) !important;
+}
+
+/* Botón de menú desplegable (caret) fuera del panel de cursos: mismo trato. */
+body:not(.pagelayout-frontpage) .dropdown-toggle:not(.nh-menu-trigger) {
+  background: var(--card) !important; border: 1px solid var(--border) !important;
+  color: var(--text) !important; font-family: var(--font) !important;
+}
+body:not(.pagelayout-frontpage) .dropdown-toggle:not(.nh-menu-trigger):hover {
+  background: var(--card-h) !important; border-color: var(--border-h) !important;
+}
+
+/* Badges y alerts: mismas 8 variantes contextuales de Bootstrap 4,
+   aplanadas a los tokens semánticos en vez de sus colores de fábrica. */
+body:not(.pagelayout-frontpage) .badge-primary,
+body:not(.pagelayout-frontpage) .badge-secondary,
+body:not(.pagelayout-frontpage) .badge-dark,
+body:not(.pagelayout-frontpage) .badge-light {
+  background: var(--card-h) !important; color: var(--text) !important;
+}
+body:not(.pagelayout-frontpage) .badge-success { background: color-mix(in oklab, var(--success) 20%, transparent) !important; color: var(--success) !important; }
+body:not(.pagelayout-frontpage) .badge-danger  { background: color-mix(in oklab, var(--danger)  20%, transparent) !important; color: var(--danger)  !important; }
+body:not(.pagelayout-frontpage) .badge-warning { background: color-mix(in oklab, var(--warning) 20%, transparent) !important; color: var(--warning) !important; }
+body:not(.pagelayout-frontpage) .badge-info    { background: color-mix(in oklab, var(--info)    20%, transparent) !important; color: var(--info)    !important; }
 
 /* Sidebar blocks en páginas internas */
 body:not(.pagelayout-frontpage) .block {
   background: var(--card) !important; border: 1px solid var(--border) !important;
+  border-top: 1px solid var(--border) !important;
   border-radius: var(--r-md) !important; margin-bottom: 12px !important;
 }
 body:not(.pagelayout-frontpage) .block .card-body { padding: 14px !important; }
 body:not(.pagelayout-frontpage) .block-header,
 body:not(.pagelayout-frontpage) .block .header {
   background: var(--card-h) !important; border-bottom: 1px solid var(--border) !important;
+  border-top: none !important;
   padding: 10px 14px !important;
 }
 body:not(.pagelayout-frontpage) .block .header h2 {
@@ -1065,12 +1163,6 @@ body:not(.pagelayout-frontpage) .alert-info { background: rgba(107,124,255,.1) !
 body:not(.pagelayout-frontpage) .alert-success { background: rgba(62,207,142,.1) !important; border-color: rgba(62,207,142,.3) !important; color: var(--text) !important; }
 body:not(.pagelayout-frontpage) .alert-warning { background: rgba(251,191,36,.1) !important; border-color: rgba(251,191,36,.3) !important; color: var(--text) !important; }
 body:not(.pagelayout-frontpage) .alert-danger  { background: rgba(239,68,68,.1) !important; border-color: rgba(239,68,68,.3) !important; color: var(--text) !important; }
-
-/* Drawer lateral en páginas de curso */
-body:not(.pagelayout-frontpage) .drawer {
-  display: block !important; visibility: visible !important;
-  background: var(--surface) !important; border-color: var(--border) !important;
-}
 
 /* ══ COURSE LISTINGS & CATEGORY BROWSE PAGES ════════════ */
 /* Applies to pages like /course/index.php, /course/search.php, etc. */
@@ -2438,6 +2530,10 @@ body.pagelayout-course .activity a:hover {
     flex-direction: column !important;
     gap: 20px !important;
     padding: 0 16px !important;
+    /* En columna el eje cruzado pasa a ser el horizontal: sin esto el
+       `align-items: flex-start` de la regla base encoge el contenido del
+       curso al ancho de su texto en vez de ocupar la columna entera. */
+    align-items: stretch !important;
   }
   #nhood-course-sidebar {
     width: 100% !important;
@@ -2768,31 +2864,6 @@ body.pagelayout-login {
   border-right: 1px solid var(--border) !important;
 }
 
-/* Accent mesh & tech grid */
-.nl-brand-col .nl-mesh {
-  position: absolute !important;
-  top: -10%;
-  left: -10%;
-  width: 120%;
-  height: 120%;
-  background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 70%),
-              radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 50%) !important;
-  filter: blur(60px) !important;
-  z-index: 1 !important;
-  pointer-events: none !important;
-}
-
-.nl-brand-col .nl-grid-overlay {
-  position: absolute !important;
-  inset: 0 !important;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px), 
-    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px) !important;
-  background-size: 24px 24px !important;
-  z-index: 2 !important;
-  pointer-events: none !important;
-}
-
 .nl-brand-content {
   position: relative !important;
   z-index: 3 !important;
@@ -2810,7 +2881,7 @@ body.pagelayout-login {
 
 .nl-logo-emoji {
   font-size: 28px !important;
-  filter: drop-shadow(0 0 10px rgba(99, 120, 255, 0.3)) !important;
+  color: var(--text) !important;
 }
 
 .nl-university {
@@ -2818,7 +2889,7 @@ body.pagelayout-login {
   font-size: 18px !important;
   font-weight: 700 !important;
   letter-spacing: -0.01em !important;
-  color: #ffffff !important;
+  color: var(--text) !important;
 }
 
 .nl-hero-text {
@@ -2908,9 +2979,8 @@ body.pagelayout-login {
   background: var(--bg) !important;
 }
 
-/* Light mode specific adjustments */
 :root.nh-light .nl-form-col {
-  background: #f4f4f5 !important;
+  background: var(--bg) !important;
 }
 
 .nl-theme-btn {
@@ -2958,7 +3028,7 @@ body.pagelayout-login {
 
 .nl-form-card:hover {
   border-color: var(--accent) !important;
-  box-shadow: 0 12px 40px rgba(99, 120, 255, 0.08), var(--shadow) !important;
+  box-shadow: 0 12px 40px var(--accent-s), var(--shadow) !important;
 }
 
 .nl-card-header {
@@ -2970,8 +3040,8 @@ body.pagelayout-login {
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
-  background: rgba(99, 120, 255, 0.08) !important;
-  border: 1px solid rgba(99, 120, 255, 0.15) !important;
+  background: var(--accent-q) !important;
+  border: 1px solid var(--accent-s) !important;
   border-radius: 30px !important;
   padding: 4px 12px !important;
   font-family: var(--font-mono) !important;
@@ -3217,8 +3287,8 @@ body.pagelayout-login {
 
 /* Error box styles */
 .nl-error-box {
-  background: rgba(239, 68, 68, 0.08) !important;
-  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  background: color-mix(in oklab, var(--danger) 8%, transparent) !important;
+  border: 1px solid color-mix(in oklab, var(--danger) 25%, transparent) !important;
   border-radius: var(--r-md) !important;
   padding: 12px 14px !important;
   display: flex !important;
@@ -3226,19 +3296,18 @@ body.pagelayout-login {
   gap: 10px !important;
   margin-bottom: 20px !important;
   text-align: left !important;
-  animation: floatIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) both !important;
 }
 
 .nl-error-icon {
   font-size: 15px !important;
-  color: #ef4444 !important;
+  color: var(--danger) !important;
   flex-shrink: 0 !important;
 }
 
 .nl-error-text {
   font-size: 12px !important;
   font-weight: 500 !important;
-  color: #ef4444 !important;
+  color: var(--danger) !important;
   line-height: 1.4 !important;
 }
 
@@ -3258,60 +3327,32 @@ body.nh-light .nl-logo-img {
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.1)) !important;
 }
 
-/* Giant glowing UTN gear logo container */
-.nl-gear-container {
+/* Logo grande y estático en el centro de la columna de marca. Antes
+   había un engranaje SVG animado (rotando + con glow pulsante) acá;
+   el resto del sitio es sobrio y sin movimiento decorativo, así que
+   se reemplaza por el logo real de UTN, quieto. */
+.nl-logo-hero {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   margin: 30px 0 !important;
-  position: relative !important;
-  z-index: 2 !important;
   flex-grow: 1 !important;
 }
-
-.nl-utn-svg-gear {
-  width: 220px !important;
-  height: 220px !important;
-  color: var(--accent) !important;
-  filter: drop-shadow(0 0 25px rgba(99, 120, 255, 0.35)) !important;
-  transition: var(--t) !important;
-  animation: pulseGlow 4s ease-in-out infinite alternate !important;
+.nl-logo-hero-img {
+  max-width: 220px !important;
+  max-height: 220px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
 }
-
-.nl-utn-svg-gear text {
-  font-family: var(--font-display) !important;
-  font-weight: 900 !important;
+body:not(.nh-light) .nl-logo-hero-img {
+  filter: invert(1) brightness(2) !important;
 }
-
-:root.nh-light .nl-utn-svg-gear {
-  filter: drop-shadow(0 4px 15px rgba(79, 91, 219, 0.2)) !important;
-}
-
-.nl-gear-body {
-  transform-origin: 60px 60px !important;
-  animation: rotateGear 40s linear infinite !important;
-}
-
-.nl-gear-hub-circle {
-  fill: #090a0f !important;
-}
-
-:root.nh-light .nl-gear-hub-circle {
-  fill: #ffffff !important;
-}
-
-@keyframes rotateGear {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes pulseGlow {
-  0% { filter: drop-shadow(0 0 15px rgba(99, 120, 255, 0.25)); }
-  100% { filter: drop-shadow(0 0 35px rgba(99, 120, 255, 0.45)); }
-}
-
-:root.nh-light .nl-utn-svg-gear {
-  animation: none !important;
+.nl-logo-hero-fallback svg {
+  width: 160px !important;
+  height: 160px !important;
+  color: var(--sub) !important;
+  stroke-width: 1 !important;
 }
 
 
@@ -3707,18 +3748,65 @@ body .secondary-navigation .dropdown-menu .dropdown-item::before {
   top: calc(var(--header-h) - 8px) !important;
   width: 320px !important;
   z-index: 10000 !important;
+  overflow: hidden !important;   /* que el header respete las esquinas redondeadas */
 }
 
-.nh-native-controls .popover-region-header {
+/* El marcado real del campus (verificado con diag_logged_in.py) es:
+
+     .popover-region-header-container
+       > h3.popover-region-header-text     ← "Notificaciones"
+       + .popover-region-header-actions    ← marcar leído / preferencias / cerrar
+
+   Las clases que apuntaba este bloque —`.popover-region-header` y
+   `.popover-region-header-title`— no existen en este Moodle, así que el
+   encabezado se quedaba sin estilo nuestro: el título y los botones
+   caían en renglones distintos y sin fondo propio. */
+.nh-native-controls .popover-region-header-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
   border-bottom: 1px solid var(--border) !important;
-  padding: 12px 16px !important;
+  padding: 10px 14px !important;
   background: var(--surface) !important;
+  border-radius: var(--r-md) var(--r-md) 0 0 !important;
 }
 
-.nh-native-controls .popover-region-header-title {
+.nh-native-controls .popover-region-header-text {
+  margin: 0 !important;
   font-weight: 700 !important;
   color: var(--text) !important;
   font-size: 13.5px !important;
+  line-height: 1.2 !important;
+}
+
+.nh-native-controls .popover-region-header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  flex: 0 0 auto !important;
+}
+
+.nh-native-controls .popover-region-header-actions .btn {
+  margin: 0 !important;
+  padding: 4px 6px !important;
+  line-height: 1 !important;
+  color: var(--sub) !important;
+  border-radius: var(--r-sm) !important;
+}
+
+.nh-native-controls .popover-region-header-actions .btn:hover {
+  background: var(--card-h) !important;
+  color: var(--text) !important;
+}
+
+/* El panel traía una altura fija que dejaba un vacío enorme cuando no
+   hay notificaciones: que crezca con el contenido y recién ahí scrollee. */
+.nh-native-controls .popover-region-content-container {
+  height: auto !important;
+  max-height: min(420px, 60vh) !important;
+  overflow-y: auto !important;
+  background: var(--card) !important;
 }
 
 .nh-native-controls .popover-region-footer {
@@ -4405,8 +4493,9 @@ table.calendartable td.weekend { background: var(--bg) !important; }
    ██████  MESSAGES FULL-PAGE (/message/index.php)
    ══════════════════════════════════════════════════════════ */
 
-/* Message app container */
-[data-region="message-drawer"],
+/* Message app container. El drawer flotante (widget del header) tiene
+   su propio fondo más abajo, en tono --surface: acá sólo cubre la
+   página completa /message/index.php, que sí es un vacío --bg. */
 .message-app,
 #page-message-index #page-content {
   background: var(--bg) !important;
@@ -4865,7 +4954,6 @@ body:not(.nh-light) table.user-grade {
 
 /* Messaging panels */
 body:not(.nh-light) .message-app,
-body:not(.nh-light) [data-region="message-drawer"],
 body:not(.nh-light) .message-app .conversations,
 body:not(.nh-light) [data-region="view-overview"],
 body:not(.nh-light) .message-app .messages-container,
@@ -5202,12 +5290,21 @@ body:not(.nh-light) .initialsbar {
 }
 
 /* ── Drawer de mensajería (Moodle 4) ───────────────────
-   Se abre desde el botón de Mensajes del header. Va por encima del
-   header propio y arranca por debajo de él para no taparlo. */
+   Se abre desde el botón de Mensajes del header. El elemento ya trae la
+   clase nativa `.drawer` (por eso killRemnants() lo excluye del kill
+   global de drawers en vez de ocultarlo): Moodle ya sabe abrirlo y
+   cerrarlo solo, con su propia animación por transform y su propia
+   clase de estado.
+
+   BUG que esto corrige: una versión anterior forzaba `display:flex` y
+   `visibility:visible` sin condición. Eso pisaba el estado "cerrado"
+   real de Moodle, así que el panel aparecía ya abierto y vacío al
+   cargar la página (el contenido interno de Moodle no se cargaba
+   porque, para su propio JS, seguía "cerrado"), y hacían falta dos
+   clics para que coincidiera con el estado visual forzado y recién
+   ahí desapareciera. Acá sólo se retocan posición y estética — nunca
+   si se ve o no. */
 [data-region="message-drawer"] {
-  display: flex !important;
-  visibility: visible !important;
-  flex-direction: column !important;
   position: fixed !important;
   inset-block-start: var(--header-h) !important;
   inset-block-end: 0 !important;
@@ -5219,6 +5316,9 @@ body:not(.nh-light) .initialsbar {
   box-shadow: var(--shadow-pop) !important;
   overflow: hidden !important;
 }
+/* Red de seguridad: si Moodle marca "cerrado" con estos atributos en
+   vez de (o además de) su transform nativo, no queda ni una rendija
+   visible. Nunca fuerza el estado "abierto" — sólo refuerza el cerrado. */
 [data-region="message-drawer"].hidden,
 [data-region="message-drawer"][aria-hidden="true"] { display: none !important; }
 
@@ -5353,12 +5453,9 @@ body.limitedwidth .secondary-navigation,
    contra el fondo oscuro, prácticamente invisible. Pasan a heredar el
    color del texto que acompañan. */
 /* Bootstrap declara `.btn { color: #333 }` y Adaptable repite grises fijos
-   en sus enlaces; sobre el fondo oscuro eso da 1.66:1. Se corrigen en el
-   ancestro, porque los iconos sólo heredan lo que reciben: ponerles
-   `currentColor` no alcanzaba, heredaban el mismo gris. */
-html body .btn:not(.btn-primary):not(.btn-success):not(.btn-danger):not(.btn-warning):not(.btn-info) {
-  color: var(--text) !important;
-}
+   en sus enlaces; sobre el fondo oscuro eso da 1.66:1. El color de todas
+   las variantes de `.btn` ya se resuelve en el sweep de Bootstrap más
+   arriba (línea ~1036); acá sólo quedan los casos que no son `.btn`. */
 html body .drawer-toggler .btn,
 html body .icon-no-margin { color: var(--sub) !important; }
 

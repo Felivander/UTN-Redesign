@@ -263,8 +263,10 @@
     ['Recuperar contraseña', '/login/forgot_password.php', 'Cuenta'],
   ];
 
-  // Orden en que se muestran los enlaces principales de la barra.
-  const NAV_PRIORITY = [/área personal|area personal/i, /mis cursos/i, /calendario/i, /mensajes/i];
+  // Enlace principal de la barra: sólo Mis cursos. El resto (Área
+  // personal, Calendario, Mensajes) ya vive en el desplegable, y
+  // Mensajes además duplica el icono nativo que queda más a la derecha.
+  const NAV_PRIORITY = [/mis cursos/i];
 
   function currentCourseId() {
     const m = body.className.match(/\bcourse-(\d+)\b/);
@@ -393,46 +395,22 @@
 
     page.innerHTML = `
       <div class="nl-brand-col">
-        <div class="nl-mesh"></div>
-        <div class="nl-grid-overlay"></div>
         <div class="nl-brand-content">
           <div class="nl-logo-area">
-            ${logoSrc 
+            ${logoSrc
               ? `<img src="${esc(logoSrc)}" class="nl-logo-img" alt="Logo de UTN">`
               : `<span class="nl-logo-emoji">${LUCIDE_ICONS.graduationCap}</span>`
             }
             <span class="nl-university">UTN · FRCon</span>
           </div>
-          
-          <div class="nl-gear-container">
-            <svg viewBox="0 0 120 120" class="nl-utn-svg-gear" aria-hidden="true">
-              <defs>
-                <path id="tooth" d="M -6 -48 L 6 -48 L 8 -36 L -8 -36 Z" fill="currentColor" />
-              </defs>
-              <g transform="translate(60, 60)" class="nl-gear-body">
-                <use href="#tooth" transform="rotate(0)" />
-                <use href="#tooth" transform="rotate(25.7)" />
-                <use href="#tooth" transform="rotate(51.4)" />
-                <use href="#tooth" transform="rotate(77.1)" />
-                <use href="#tooth" transform="rotate(102.8)" />
-                <use href="#tooth" transform="rotate(128.5)" />
-                <use href="#tooth" transform="rotate(154.2)" />
-                <use href="#tooth" transform="rotate(180)" />
-                <use href="#tooth" transform="rotate(205.7)" />
-                <use href="#tooth" transform="rotate(231.4)" />
-                <use href="#tooth" transform="rotate(257.1)" />
-                <use href="#tooth" transform="rotate(282.8)" />
-                <use href="#tooth" transform="rotate(308.5)" />
-                <use href="#tooth" transform="rotate(334.2)" />
-                <circle cx="0" cy="0" r="40" stroke="currentColor" stroke-width="8" fill="none" />
-                <line x1="0" y1="-40" x2="0" y2="40" stroke="currentColor" stroke-width="8" />
-                <line x1="-40" y1="0" x2="40" y2="0" stroke="currentColor" stroke-width="8" />
-                <circle cx="0" cy="0" r="26" fill="none" stroke="currentColor" stroke-width="6" class="nl-gear-hub-circle" />
-              </g>
-              <text x="60" y="68" font-family="'Outfit', sans-serif" font-weight="900" font-size="22" fill="currentColor" text-anchor="middle" letter-spacing="-0.5">UTN</text>
-            </svg>
+
+          <div class="nl-logo-hero">
+            ${logoSrc
+              ? `<img src="${esc(logoSrc)}" class="nl-logo-hero-img" alt="" aria-hidden="true">`
+              : `<span class="nl-logo-hero-fallback" aria-hidden="true">${LUCIDE_ICONS.graduationCap}</span>`
+            }
           </div>
-          
+
           <div class="nl-hero-text">
             <span class="nl-eyebrow">FACULTAD REGIONAL CONCORDIA</span>
             <h1>Campus<br>Virtual</h1>
@@ -534,13 +512,13 @@
         return {
           title: sl?.textContent?.trim() ?? '',
           href:  sl?.href ?? '#',
-          count: sc?.textContent?.replace(/[()\\s]/g,'').trim() ?? '',
+          count: sc?.textContent?.replace(/[()\s]/g,'').trim() ?? '',
         };
       });
       return {
         title: link?.textContent?.trim() ?? '',
         href:  link?.href ?? '#',
-        count: count?.textContent?.replace(/[()\\s]/g,'').trim() ?? '',
+        count: count?.textContent?.replace(/[()\s]/g,'').trim() ?? '',
         subs,
       };
     });
@@ -802,11 +780,18 @@
   function toggleSheet(btn) {
     const sheet = document.getElementById('nhood-sheet');
     if (!sheet) return;
-    if (sheet.hidden) {
+    // `hidden` no sirve como estado: durante los 220ms de la transición de
+    // salida sigue en false, así que el botón quedaba muerto — el click
+    // siguiente volvía a cerrar en vez de reabrir. Y la clase `open`
+    // tampoco, porque la agrega un requestAnimationFrame que no corre si la
+    // pestaña pasa a segundo plano. Un flag propio, puesto de forma
+    // síncrona, es la única fuente de verdad.
+    if (sheet.dataset.open !== '1') {
       window.clearTimeout(sheetCloseTimer);
       sheetCloseTimer = 0;
+      sheet.dataset.open = '1';
       sheet.hidden = false;
-      requestAnimationFrame(() => sheet.classList.add('open'));
+      requestAnimationFrame(() => { if (sheet.dataset.open === '1') sheet.classList.add('open'); });
       btn.setAttribute('aria-expanded', 'true');
       $('.nh-sheet-close', sheet)?.focus();
     } else {
@@ -816,14 +801,15 @@
 
   function closeSheet() {
     const sheet = document.getElementById('nhood-sheet');
-    if (!sheet || sheet.hidden) return;
+    if (!sheet || sheet.dataset.open !== '1') return;
+    sheet.dataset.open = '0';
     sheet.classList.remove('open');
     const btn = $('.nh-menu-btn');
     if (btn) { btn.setAttribute('aria-expanded', 'false'); btn.focus(); }
     window.clearTimeout(sheetCloseTimer);
     sheetCloseTimer = window.setTimeout(() => {
-      // If the user reopens during the exit transition, keep the sheet open.
-      if (!sheet.classList.contains('open')) sheet.hidden = true;
+      // Si el usuario reabrió durante la transición de salida, no lo ocultamos.
+      if (sheet.dataset.open !== '1') sheet.hidden = true;
       sheetCloseTimer = 0;
     }, 220);
   }
@@ -873,9 +859,12 @@
 
     // 3. Mensajería. Según la versión, Moodle la expone como popover o
     //    como un botón que abre el drawer de mensajes: buscamos las dos.
+    // Ojo con el id: el campus lo emite como `message-drawer-toggle-<hash>`,
+    // así que un `#message-drawer-toggle` exacto nunca matchea.
+    const MSG_TOGGLE = '[data-action="toggle-message-drawer"], [id^="message-drawer-toggle"]';
     const msg = $('[data-region="popover-region-messages"], .popover-region-messages')
-             || $('[data-action="toggle-message-drawer"], #message-drawer-toggle')?.closest('.nav-item, .popover-region, li')
-             || $('[data-action="toggle-message-drawer"], #message-drawer-toggle');
+             || $(MSG_TOGGLE)?.closest('.nav-item, .popover-region, li')
+             || $(MSG_TOGGLE);
     if (msg) {
       container.appendChild(msg);
     }
@@ -1232,11 +1221,15 @@
     const courseContent = $('.course-content');
     if (!courseContent) return;
 
+    // Sin `.course-content .section` a secas: ese selector también matchea
+    // los <ul class="section"> internos de cada tema, con lo cual cada
+    // sección entraba dos veces (la segunda sin .sectionname, cayendo al
+    // fallback "Sección N") y cada actividad quedaba listada por duplicado.
     const sections = $$(
       '.course-content ul.topics li.section, ' +
       '.course-content ul.weeks li.section, ' +
       '.course-content li.section, ' +
-      '.course-content .section'
+      '.course-content section.section'
     );
     if (sections.length === 0) return;
 
@@ -1457,8 +1450,13 @@
     if (isLoginPage || isFrontPage) {
       $$('#page-wrapper, .logincontainer, #page-header, #page-footer, #page, .navbar, #adaptable-page-header-wrapper, .drawers, .drawer-toggles, .drawer, #nav-drawer').forEach(el => {
         // El drawer de mensajería queda fuera: es la mensajería en sí,
-        // no cromo residual del tema.
-        if (el.matches('[data-region="message-drawer"]') || el.closest('[data-region="message-drawer"]')) return;
+        // no cromo residual del tema. El `data-region` está en un hijo,
+        // así que hay que mirar hacia adentro además de hacia arriba:
+        // con sólo `closest()` el contenedor `.drawer` que lo envuelve
+        // —el que Moodle abre y cierra— se ocultaba igual.
+        if (el.matches('[data-region="message-drawer"]')
+            || el.closest('[data-region="message-drawer"]')
+            || el.querySelector('[data-region="message-drawer"]')) return;
         if (el && el.id !== 'nhood-login-page' && !el.id.startsWith('nhood-')) {
           el.style.cssText = 'display:none!important;height:0!important;min-height:0!important;max-height:0!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important;margin:0!important;padding:0!important';
         }
@@ -1490,6 +1488,23 @@
     anchor.id = 'nhood-main';
     anchor.tabIndex = -1;
     target.parentNode.insertBefore(anchor, target);
+  }
+
+  // ── Mantener el footer al final ────────────────────────
+  // Algunos formatos de curso cargan secciones nuevas a medida que se
+  // scrollea (visto en "SEMANA 1" apareciendo recién al bajar). Esas
+  // secciones se insertan en el DOM después de que nuestro footer ya
+  // era el último hijo del body, así que el footer queda encajado en
+  // el medio de la página en vez de al final. Lo reubicamos cada vez
+  // que Moodle agrega contenido nuevo.
+  function pinFooterToEnd() {
+    const footer = document.getElementById('nhood-footer');
+    if (footer && footer !== body.lastElementChild) body.appendChild(footer);
+  }
+
+  function watchForLateContent() {
+    const observer = new MutationObserver(() => pinFooterToEnd());
+    observer.observe(body, { childList: true, subtree: true });
   }
 
   // ── Main ───────────────────────────────────────────────
@@ -1547,6 +1562,10 @@
       if (crumbBar) body.insertBefore(crumbBar, header.nextSibling);
 
       body.appendChild(buildFooter(user));
+      // No es sólo la vista de curso: los acordeones de categorías, la
+      // paginación y cualquier otro contenido que Moodle agregue después
+      // de este punto pueden dejar el footer encajado en el medio.
+      watchForLateContent();
 
       if (body.classList.contains('pagelayout-course') || location.pathname.includes('/course/view.php')) {
         body.classList.add('pagelayout-course');

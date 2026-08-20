@@ -23,14 +23,16 @@ OUT = os.path.join(ROOT, "diag_out")
 PROFILE = os.path.join(ROOT, "playwright_user_data")
 
 PAGES = [
-    ("my_courses", "/my/courses.php"),
-    ("dashboard",  "/my/"),
-    ("calendario", "/calendar/view.php?view=month"),
-    ("perfil",     "/user/profile.php"),
+    ("categorias",  "/course/index.php"),
+    ("dashboard",   "/my/index.php"),
+    ("my_courses",  "/my/courses.php"),
+    ("curso_645",   "/course/view.php?id=645"),
+    ("calendario",  "/calendar/view.php?view=month"),
+    ("perfil",      "/user/profile.php"),
 ]
 
 # Se evalua en la pagina para saber que ve realmente el usuario.
-PROBE = """() => {
+PROBE = r"""() => {
   const $  = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
   const box = el => {
@@ -54,11 +56,57 @@ PROBE = """() => {
     navLinks:     $$('#nhood-header .nh-nav-link').map(a => a.textContent.trim()),
     moreMenuItems:$$('#nhood-header .nh-menu-panel .nh-menu-item').map(a => a.textContent.trim()),
     crumbs:       $$('#nhood-crumbs .nh-crumb').map(c => c.textContent.trim()),
-    rail:         box($('#nhood-block-rail')),
-    railBlocks:   $$('#nhood-block-rail .block').map(b =>
-                    (b.className.match(/block_[a-z_]+/) || ['?'])[0]),
     bodyPadStart: getComputedStyle(document.body).paddingInlineStart,
     pagePadStart: (() => { const p = $('#page'); return p ? getComputedStyle(p).paddingInlineStart : null; })(),
+
+    // El footer aparecía "encajado" en medio de la página en vez de al
+    // final. Esto responde: ¿de verdad es el último hijo del body? ¿qué
+    // hay justo después de él en el DOM? ¿hay algún ancestro con scroll
+    // propio (overflow + altura acotada) que lo esté conteniendo?
+    footerDiag: (() => {
+      const f = $('#nhood-footer');
+      if (!f) return 'NO EXISTE #nhood-footer EN EL DOM';
+      const rectF = f.getBoundingClientRect();
+      const isLast = f === document.body.lastElementChild;
+      const next = f.nextElementSibling;
+      const prev = f.previousElementSibling;
+      // Camina hacia arriba buscando un ancestro que recorte/scrollee
+      // por su cuenta y cuyo rect contenga verticalmente al footer.
+      const clippers = [];
+      let n = f.parentElement;
+      while (n && n !== document.documentElement) {
+        const cs = getComputedStyle(n);
+        const scrolls = /(auto|scroll)/.test(cs.overflowY);
+        const finite = cs.maxHeight !== 'none' || (n.scrollHeight > n.clientHeight + 4);
+        if (scrolls && finite) {
+          const r = n.getBoundingClientRect();
+          clippers.push({
+            sel: n.tagName.toLowerCase() + (n.id ? '#'+n.id : '') + '.' +
+                 (typeof n.className === 'string' ? n.className.trim().split(/\\s+/).slice(0,3).join('.') : ''),
+            overflowY: cs.overflowY, maxHeight: cs.maxHeight,
+            scrollHeight: n.scrollHeight, clientHeight: n.clientHeight,
+            containsFooterY: rectF.top >= r.top && rectF.bottom <= r.bottom,
+          });
+        }
+        n = n.parentElement;
+      }
+      return {
+        isLastChildOfBody: isLast,
+        parent: f.parentElement ? f.parentElement.tagName.toLowerCase() + '#' + (f.parentElement.id||'') : null,
+        nextSibling: next ? next.tagName.toLowerCase() + '#' + (next.id||'') + '.' +
+                     (typeof next.className === 'string' ? next.className.trim().split(/\\s+/).slice(0,3).join('.') : '') : null,
+        prevSibling: prev ? prev.tagName.toLowerCase() + '#' + (prev.id||'') + '.' +
+                     (typeof prev.className === 'string' ? prev.className.trim().split(/\\s+/).slice(0,3).join('.') : '') : null,
+        rect: { top: Math.round(rectF.top), bottom: Math.round(rectF.bottom), y: Math.round(rectF.y + window.scrollY) },
+        docHeight: document.documentElement.scrollHeight,
+        scrollingClippers: clippers,
+        siblingsAfterFooterCount: (() => {
+          let c = 0, s = f.nextElementSibling;
+          while (s) { c++; s = s.nextElementSibling; }
+          return c;
+        })(),
+      };
+    })(),
 
     // Controles nativos movidos al header
     nativeControls: $$('#nhood-header .nh-native-controls > *').map(e =>
@@ -73,6 +121,113 @@ PROBE = """() => {
                 + ' [data-region="popover-region-messages"] .popover-region-toggle');
       return t ? { found: true, box: box(t), inHeader: !!t.closest('#nhood-header') }
                : { found: false };
+    })(),
+
+    // Volcado crudo de TODO lo que huela a mensajeria. Los tres selectores
+    // de messageToggle dan false en las seis paginas, asi que hay que ver
+    // el markup real: sin esto no se puede saber que hay que enganchar.
+    messagingDump: (() => {
+      const trim = el => {
+        const h = el.outerHTML.replace(/\s+/g, ' ');
+        return h.length > 700 ? h.slice(0, 700) + ' …[cortado]' : h;
+      };
+      const desc = el => ({
+        tag: el.tagName,
+        cls: el.className || '',
+        id: el.id || '',
+        data: Object.assign({}, el.dataset),
+        href: el.getAttribute('href') || '',
+        inHeader: !!el.closest('#nhood-header'),
+        inNativeControls: !!el.closest('.nh-native-controls'),
+        box: box(el),
+        html: trim(el),
+      });
+      // Candidatos por marcado y por texto/icono visible.
+      const cands = new Set();
+      $$('.popover-region, [data-region^="popover-region"], [data-action*="message"],'
+       + ' [id*="message"], [class*="message"], [href*="/message/"]')
+        .filter(el => !el.closest('[data-region="message-drawer"]'))
+        .forEach(el => cands.add(el));
+      $$('a, button').forEach(el => {
+        const t = (el.textContent || '') + ' ' + (el.getAttribute('aria-label') || '')
+                + ' ' + (el.getAttribute('title') || '');
+        if (/mensaje|message|chat/i.test(t)) cands.add(el);
+      });
+      const list = [...cands].slice(0, 25).map(desc);
+
+      const drawer = $('[data-region="message-drawer"]');
+      return {
+        candidates: list,
+        drawerHTMLHead: drawer ? trim(drawer).slice(0, 700) : null,
+        drawerClasses: drawer ? drawer.className : null,
+        drawerAria: drawer ? {
+          hidden: drawer.getAttribute('aria-hidden'),
+          expanded: drawer.getAttribute('aria-expanded'),
+        } : null,
+        drawerParent: drawer && drawer.parentElement
+          ? drawer.parentElement.tagName + '#' + drawer.parentElement.id + '.' + drawer.parentElement.className
+          : null,
+        // Que regla nuestra le esta ganando al estado abierto/cerrado.
+        drawerComputed: drawer ? (() => {
+          const cs = getComputedStyle(drawer);
+          return { display: cs.display, visibility: cs.visibility, transform: cs.transform,
+                   width: cs.width, height: cs.height, right: cs.right, zIndex: cs.zIndex };
+        })() : null,
+        bodyDrawerClasses: document.body.className.split(' ')
+          .filter(c => /drawer|message/i.test(c)),
+        jsHooks: {
+          hasRequire: typeof window.require === 'function',
+          hasM: !!window.M,
+        },
+      };
+    })(),
+
+    // Superficies claras mientras el tema es oscuro: son las cajas blancas
+    // que se ven dentro del curso. Reporta quien las pinta para poder
+    // escribir el selector correcto en vez de adivinar.
+    lightSurfaces: (() => {
+      const isLight = document.documentElement.classList.contains('nh-light');
+      // Luminancia aproximada a partir de lo que devuelve getComputedStyle.
+      const lum = (c) => {
+        let m = c.match(/rgba?\(([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?/);
+        if (m) {
+          if (m[4] !== undefined && parseFloat(m[4]) < 0.15) return null;  // transparente
+          return (0.2126 * m[1] + 0.7152 * m[2] + 0.0722 * m[3]) / 255;
+        }
+        m = c.match(/okl(?:ch|ab)\(\s*([\d.]+)/);
+        return m ? parseFloat(m[1]) : null;
+      };
+      const out = [];
+      const nodes = $$('#region-main *, .course-content *, #nhood-course-content-container *');
+      for (const el of nodes) {
+        if (out.length >= 20) break;
+        if (el.closest('#nhood-header, #nhood-sheet, #nhood-palette')) continue;
+        const cs = getComputedStyle(el);
+        const L = lum(cs.backgroundColor);
+        if (L === null || L < 0.72) continue;          // no es una superficie clara
+        const r = el.getBoundingClientRect();
+        if (r.width < 60 || r.height < 24) continue;   // ruido: chips, iconos
+        out.push({
+          tag: el.tagName,
+          cls: (el.className || '').toString().slice(0, 120),
+          id: el.id || '',
+          bg: cs.backgroundColor,
+          color: cs.color,
+          inlineStyle: el.getAttribute('style') || '',
+          box: { w: Math.round(r.width), h: Math.round(r.height) },
+          // cadena de ancestros: ubica el nodo sin tener que abrir el DOM
+          path: (() => {
+            const p = [];
+            let n = el;
+            for (let i = 0; n && i < 4; i++, n = n.parentElement) {
+              p.push(n.tagName + (n.id ? '#' + n.id : '')
+                   + '.' + (n.className || '').toString().split(' ').slice(0, 3).join('.'));
+            }
+            return p.join('  <  ');
+          })(),
+        });
+      }
+      return { temaClaro: isLight, encontradas: out.length, elementos: out };
     })(),
 
     // Contenido principal: lo que se "ve raro"
@@ -152,6 +307,17 @@ def main():
 
             data = page.evaluate(PROBE)
             data["pageErrors"] = errors[:5]
+
+            # Repite sólo el diagnóstico del footer después de scrollear:
+            # el reporte del usuario menciona que aparece mal ya al cargar,
+            # pero conviene ver si scrollear lo mueve o lo empeora.
+            page.mouse.wheel(0, 2000)
+            page.wait_for_timeout(1200)
+            data["footerDiagAfterScroll"] = page.evaluate(
+                "() => { const el = document.querySelector('#nhood-footer');"
+                " if (!el) return 'ausente'; const r = el.getBoundingClientRect();"
+                " return { isLastChildOfBody: el === document.body.lastElementChild,"
+                " top: Math.round(r.top), bottom: Math.round(r.bottom) }; }")
 
             # Probar el boton de mensajes en la primera pagina
             if name == "my_courses":
