@@ -260,6 +260,13 @@ html body .drawer:not(:has([data-region="message-drawer"])):not([data-region="me
   visibility: hidden !important;
 }
 
+/* Adaptable muestra un aviso ("Blocks in this area will only be visible to
+   users that can edit…") dentro de div.hidden-blocks. En el Área personal
+   cada alumno puede editar sus propios bloques, así que Moodle se lo
+   muestra a todos aunque no estén editando. Sólo tiene sentido en modo
+   edición (body.editing). */
+body:not(.editing) .hidden-blocks { display: none !important; }
+
 /* .sr-only NO se oculta con display:none — eso borra el texto para
    lectores de pantalla. Se aplica el patrón de recorte visual, que
    lo saca de la vista pero lo deja en el árbol de accesibilidad. */
@@ -3357,6 +3364,22 @@ body:not(.nh-light) .nl-logo-hero-img {
 
 
 /* ══ INDIVIDUAL COURSE VIEW IMPROVEMENTS (WHITESPACE, CUSTOM HEADER, SHADCN TABS) ══ */
+
+/* Adaptable pinta el interior de cada sección (format_topics) con blanco
+   fijo en .section-item y .course-section-header — medido con la sesión
+   real: rgb(255,255,255), sin estilo inline. Sobre el tema oscuro dejaba
+   las tarjetas blancas con el título casi invisible. El li.section exterior
+   ya es la tarjeta; el interior va transparente y hereda su fondo. */
+body.pagelayout-course .section-item,
+body.pagelayout-course .course-section-header {
+  background: transparent !important;
+  color: var(--text) !important;
+}
+body.pagelayout-course .course-section-header .sectionname,
+body.pagelayout-course .course-section-header h3,
+body.pagelayout-course .course-section-header a {
+  color: var(--text) !important;
+}
 
 /* Collapse massive white space at the top of course page views */
 body.pagelayout-course #page-header,

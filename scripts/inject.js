@@ -6,6 +6,7 @@
   'use strict';
 
   const STORAGE_KEY = 'nhood-theme';
+  const LOGO_KEY    = 'nhood-logo';
 
   // ── Lucide Vector Icons (Inline SVGs for reliability and zero-CSP issues) ──────
   const LUCIDE_ICONS = {
@@ -147,6 +148,9 @@
         }
       } catch (e) {}
     }
+    // La página de login nativa no trae ninguna <img> (verificado con REA),
+    // así que guardamos el logo visto acá para que el login lo reutilice.
+    if (logoSrc) try { localStorage.setItem(LOGO_KEY, logoSrc); } catch (e) {}
     return {
       logoSrc,
       loginURL: $('a.btn-login')?.href ?? '/login/index.php',
@@ -378,6 +382,7 @@
         }
       } catch (e) {}
     }
+    if (!logoSrc) try { logoSrc = localStorage.getItem(LOGO_KEY) || ''; } catch (e) {}
 
     return {
       action:    form?.action ?? '/login/index.php',
