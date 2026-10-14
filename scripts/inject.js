@@ -54,12 +54,6 @@
   const isLoggedIn  = !body.classList.contains('notloggedin');
   const isLoginPage = body.classList.contains('pagelayout-login');
 
-  // Inject general courses page layout class if on dashboard or courses page
-  const isMyCoursesPage = window.location.pathname.includes('/my/') || window.location.pathname.includes('courses.php');
-  if (isMyCoursesPage) {
-    body.classList.add('pagelayout-mycourses');
-  }
-
   // ── Icon map ───────────────────────────────────────────
   const ICONS = {
     'ingreso':'graduationCap','basica':'compass','básica':'compass','civil':'building',
@@ -341,18 +335,6 @@
     });
 
     return items;
-  }
-
-  function scrapeCrumbs() {
-    const nav = $('#page-navbar .breadcrumb, .breadcrumb');
-    if (!nav) return [];
-    return $$('li', nav).map(li => {
-      const a = $('a', li);
-      return {
-        label: (a || li).textContent.replace(/\s+/g, ' ').trim(),
-        href:  a ? a.href : '',
-      };
-    }).filter(c => c.label);
   }
 
   function scrapeLogin() {
@@ -819,26 +801,6 @@
     }, 220);
   }
 
-  // ── Breadcrumbs propios ────────────────────────────────
-  function buildCrumbs(crumbs) {
-    if (crumbs.length < 2) return null;
-    const el = document.createElement('nav');
-    el.id = 'nhood-crumbs';
-    el.setAttribute('aria-label', 'Ruta de navegación');
-    el.innerHTML = `
-      <ol class="nh-crumb-list">
-        ${crumbs.map((c, i) => `
-          <li class="nh-crumb">
-            ${c.href && i < crumbs.length - 1
-              ? `<a href="${esc(c.href)}">${esc(c.label)}</a>`
-              : `<span aria-current="page">${esc(c.label)}</span>`}
-          </li>
-        `).join('')}
-      </ol>
-    `;
-    return el;
-  }
-
   // ── Inject Native Controls ─────────────────────────────
   function injectNativeControls(headerEl) {
     const inner = headerEl.querySelector('.nh-inner');
@@ -1201,6 +1163,12 @@
   function buildFooter(user) {
     const f = document.createElement('div');
     f.id = 'nhood-footer';
+    // El pie nativo de Adaptable se oculta, pero trae dos enlaces útiles
+    // (privacidad y app móvil) que se rescatan acá con sus URLs reales.
+    const extraFooterLinks = [
+      ['a[href*="dataprivacy/summary"]', 'Retención de datos'],
+      ['a.mobilelink', 'App móvil'],
+    ].map(([sel, label]) => { const a = $(sel); return a ? `<a href="${esc(a.href)}" rel="noopener">${label}</a>` : ''; }).join('');
     const logoutLink = user
       ? `<a href="${esc(user.logoutURL)}">Cerrar sesión</a>`
       : `<a href="/login/signup.php">Registrarse</a>`;
@@ -1212,261 +1180,12 @@
           ${logoutLink}
           <a href="/course/index.php">Todos los cursos</a>
           <a href="/login/forgot_password.php">Ayuda</a>
+          ${extraFooterLinks}
         </div>
         <span class="nf-copy">frcon.cvg.utn.edu.ar</span>
       </div>
     `;
     return f;
-  }
-
-  // ── Redesign Course View (Sidebar directory menu) ──────
-  function redesignCourseView() {
-    if (document.getElementById('nhood-course-layout')) return;
-
-    const courseContent = $('.course-content');
-    if (!courseContent) return;
-
-    // Sin `.course-content .section` a secas: ese selector también matchea
-    // los <ul class="section"> internos de cada tema, con lo cual cada
-    // sección entraba dos veces (la segunda sin .sectionname, cayendo al
-    // fallback "Sección N") y cada actividad quedaba listada por duplicado.
-    const sections = $$(
-      '.course-content ul.topics li.section, ' +
-      '.course-content ul.weeks li.section, ' +
-      '.course-content li.section, ' +
-      '.course-content section.section'
-    );
-    if (sections.length === 0) return;
-
-    const directoryTree = [];
-    sections.forEach((sectionEl, idx) => {
-      const id = sectionEl.id || `section-${idx}`;
-      
-      const titleEl = $(
-        '.sectionname, h3.section-title, .section-title, h3',
-        sectionEl
-      );
-      let title = titleEl?.textContent?.trim() || `Sección ${idx}`;
-      title = title.replace(/\s*Editar\s*$/, '').trim();
-      if (!title) title = `Tema ${idx}`;
-
-      const items = [];
-      const activities = $$('.activity', sectionEl);
-      activities.forEach((actEl) => {
-        const link = $('a', actEl);
-        if (!link) return;
-        
-        const nameEl = $('.instancename, span.activityname, a', actEl);
-        let name = nameEl?.textContent?.trim() || link.textContent?.trim() || 'Recurso';
-        
-        // Clean up native Moodle suffixes and extra whitespace
-        name = name.replace(/\s*(Archivo|Foro|Tarea|Cuestionario|Página|URL|Carpeta|Feedback)\s*$/, '').trim();
-
-        let type = 'resource';
-        const classes = [...actEl.classList];
-        const typeClass = classes.find(c => c.startsWith('modtype_'));
-        if (typeClass) {
-          type = typeClass.replace('modtype_', '');
-        }
-
-        items.push({
-          name,
-          href: link.href,
-          type,
-          id: actEl.id || '',
-        });
-      });
-
-      directoryTree.push({
-        id,
-        title,
-        items,
-      });
-    });
-
-    const sidebar = document.createElement('div');
-    sidebar.id = 'nhood-course-sidebar';
-
-    let treeHTML = '';
-    directoryTree.forEach((sec) => {
-      let itemsHTML = '';
-      sec.items.forEach(item => {
-        let icon = LUCIDE_ICONS.folder;
-        if (item.type === 'forum') icon = LUCIDE_ICONS.globe;
-        else if (item.type === 'assign') icon = LUCIDE_ICONS.clipboard;
-        else if (item.type === 'quiz') icon = LUCIDE_ICONS.shieldCheck;
-        else if (item.type === 'resource') icon = LUCIDE_ICONS.bookOpen;
-        else if (item.type === 'page' || item.type === 'url') icon = LUCIDE_ICONS.link;
-        else if (item.type === 'feedback') icon = LUCIDE_ICONS.barChart2;
-
-        // Anchor real: el índice sigue siendo navegable con teclado, se puede
-        // abrir en otra pestaña y el destino se ve antes de hacer click.
-        itemsHTML += `
-          <a class="nh-sidebar-item" href="${esc(item.href)}"
-             data-item-id="${esc(item.id)}" data-type="${esc(item.type)}">
-            <span class="nh-sidebar-item-icon" aria-hidden="true">${icon}</span>
-            <span class="nh-sidebar-item-name">${esc(item.name)}</span>
-          </a>
-        `;
-      });
-
-      const panelId = `nh-sec-panel-${sec.id}`;
-      treeHTML += `
-        <div class="nh-sidebar-sec-group" data-sec-id="${esc(sec.id)}">
-          <button type="button" class="nh-sidebar-sec-header" aria-expanded="true" aria-controls="${panelId}">
-            <span class="nh-sidebar-sec-arrow" aria-hidden="true">${LUCIDE_ICONS.chevronRight}</span>
-            <span class="nh-sidebar-sec-title">${esc(sec.title)}</span>
-          </button>
-          <div class="nh-sidebar-sec-items" id="${panelId}">
-            ${itemsHTML || '<p class="nh-sidebar-item-empty">Sin actividades</p>'}
-          </div>
-        </div>
-      `;
-    });
-
-    sidebar.innerHTML = `
-      <div class="nh-sidebar-inner">
-        <div class="nh-sidebar-title">Índice del Curso</div>
-        <div class="nh-sidebar-tree">
-          ${treeHTML}
-        </div>
-      </div>
-    `;
-
-    // Wrapping layout
-    const mainRegion = $('#region-main') || $('.course-content');
-    if (!mainRegion) return;
-
-    // Extract full course name
-    let courseTitle = '';
-    const h1El = $('.page-header-headings h1, .page-header h1, #page-header h1, h1');
-    if (h1El) courseTitle = h1El.textContent.trim();
-    if (!courseTitle || courseTitle.toLowerCase() === 'utn') {
-      let rawTitle = document.title;
-      if (rawTitle.includes(':')) rawTitle = rawTitle.split(':').pop();
-      if (rawTitle.includes('-')) rawTitle = rawTitle.split('-')[0];
-      courseTitle = rawTitle.trim();
-    }
-    courseTitle = courseTitle.replace(/\s+/g, ' ').replace(/\s*Editar\s*$/, '').trim();
-
-    // Create course header
-    const courseHeader = document.createElement('div');
-    courseHeader.className = 'nh-course-header-block';
-    courseHeader.innerHTML = `
-      <div class="nh-course-badge-row">
-        <span class="nh-course-badge">Materia</span>
-      </div>
-      <h1 class="nh-course-title-text">${courseTitle}</h1>
-    `;
-
-    const layoutWrapper = document.createElement('div');
-    layoutWrapper.id = 'nhood-course-layout';
-    
-    mainRegion.parentNode.insertBefore(layoutWrapper, mainRegion);
-    
-    const contentContainer = document.createElement('div');
-    contentContainer.id = 'nhood-course-content-container';
-    
-    contentContainer.appendChild(mainRegion);
-    contentContainer.insertBefore(courseHeader, mainRegion);
-    
-    layoutWrapper.appendChild(sidebar);
-    layoutWrapper.appendChild(contentContainer);
-
-    // Event listeners
-    $$('.nh-sidebar-sec-header', sidebar).forEach(headerBtn => {
-      headerBtn.addEventListener('click', () => {
-        const group    = headerBtn.closest('.nh-sidebar-sec-group');
-        const itemsDiv = $('.nh-sidebar-sec-items', group);
-        const expanded = headerBtn.getAttribute('aria-expanded') === 'true';
-
-        headerBtn.setAttribute('aria-expanded', String(!expanded));
-        itemsDiv.hidden = expanded;
-        group.classList.toggle('collapsed', expanded);
-
-        // Al abrir, además llevamos la vista a esa sección del curso.
-        if (expanded) return;
-        document.getElementById(group.getAttribute('data-sec-id'))
-          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-
-    $$('.nh-sidebar-item', sidebar).forEach(itemLink => {
-      itemLink.addEventListener('click', (e) => {
-        // Respetamos ctrl/cmd/shift-click y el click del medio: son formas
-        // legítimas de abrir la actividad en otra pestaña.
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
-
-        const targetAct = document.getElementById(itemLink.dataset.itemId);
-        if (!targetAct) return;   // no está en esta página: que el anchor navegue
-
-        e.preventDefault();
-        $$('.nh-sidebar-item', sidebar).forEach(el => {
-          el.classList.remove('active');
-          el.removeAttribute('aria-current');
-        });
-        itemLink.classList.add('active');
-        itemLink.setAttribute('aria-current', 'page');
-
-        targetAct.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        targetAct.classList.add('nh-highlight-pulse');
-        setTimeout(() => targetAct.classList.remove('nh-highlight-pulse'), 2000);
-      });
-    });
-
-    // Scroll Spy highlight
-    const observerOptions = {
-      root: null,
-      rootMargin: '-10% 0px -60% 0px',
-      threshold: 0
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const secId = entry.target.id;
-          const sidebarGroup = $(`.nh-sidebar-sec-group[data-sec-id="${secId}"]`, sidebar);
-          if (sidebarGroup) {
-            $$('.nh-sidebar-sec-group', sidebar).forEach(g => g.classList.remove('active'));
-            sidebarGroup.classList.add('active');
-          }
-        }
-      });
-    }, observerOptions);
-
-    sections.forEach(sec => {
-      if (sec.id) observer.observe(sec);
-    });
-  }
-
-  // ── Kill Moodle remnants ───────────────────────────────
-  function killRemnants() {
-    // Footer
-    $$('footer, #page-footer, [id*="footer"], .page-footer').forEach(el => {
-      if (el.id !== 'nhood-footer')
-        el.style.cssText = 'display:none!important;height:0!important;overflow:hidden!important';
-    });
-    // Backgrounds
-    ['#page-wrapper','#page','#page-content','#region-main-box'].forEach(s => {
-      const el = $(s);
-      if (el) el.style.background = 'transparent';
-    });
-    // On login or front page, ensure all native drawers/wrappers are completely hidden
-    if (isLoginPage || isFrontPage) {
-      $$('#page-wrapper, .logincontainer, #page-header, #page-footer, #page, .navbar, #adaptable-page-header-wrapper, .drawers, .drawer-toggles, .drawer, #nav-drawer').forEach(el => {
-        // El drawer de mensajería queda fuera: es la mensajería en sí,
-        // no cromo residual del tema. El `data-region` está en un hijo,
-        // así que hay que mirar hacia adentro además de hacia arriba:
-        // con sólo `closest()` el contenedor `.drawer` que lo envuelve
-        // —el que Moodle abre y cierra— se ocultaba igual.
-        if (el.matches('[data-region="message-drawer"]')
-            || el.closest('[data-region="message-drawer"]')
-            || el.querySelector('[data-region="message-drawer"]')) return;
-        if (el && el.id !== 'nhood-login-page' && !el.id.startsWith('nhood-')) {
-          el.style.cssText = 'display:none!important;height:0!important;min-height:0!important;max-height:0!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important;margin:0!important;padding:0!important';
-        }
-      });
-    }
   }
 
   // ── Bloques laterales de Moodle ────────────────────────
@@ -1495,27 +1214,10 @@
     target.parentNode.insertBefore(anchor, target);
   }
 
-  // ── Mantener el footer al final ────────────────────────
-  // Algunos formatos de curso cargan secciones nuevas a medida que se
-  // scrollea (visto en "SEMANA 1" apareciendo recién al bajar). Esas
-  // secciones se insertan en el DOM después de que nuestro footer ya
-  // era el último hijo del body, así que el footer queda encajado en
-  // el medio de la página en vez de al final. Lo reubicamos cada vez
-  // que Moodle agrega contenido nuevo.
-  function pinFooterToEnd() {
-    const footer = document.getElementById('nhood-footer');
-    if (footer && footer !== body.lastElementChild) body.appendChild(footer);
-  }
-
-  function watchForLateContent() {
-    const observer = new MutationObserver(() => pinFooterToEnd());
-    observer.observe(body, { childList: true, subtree: true });
-  }
-
   // ── Main ───────────────────────────────────────────────
   const INJECTED_IDS = [
     'nhood-header', 'nhood-hero', 'nhood-welcome', 'nhood-categories-wrap',
-    'nhood-footer', 'nhood-login-page', 'nhood-sheet', 'nhood-crumbs',
+    'nhood-footer', 'nhood-login-page', 'nhood-sheet',
     'nhood-palette', 'nhood-main',
   ];
 
@@ -1532,7 +1234,6 @@
       const loginData = scrapeLogin();
       body.appendChild(buildLoginPage(loginData));
       applyTheme(getTheme());
-      killRemnants();
       return;
     }
 
@@ -1540,7 +1241,6 @@
     const user       = isLoggedIn ? scrapeUser() : null;
     // La cosecha ocurre ANTES de ocultar nada: los menús nativos siguen en el DOM.
     const nav        = scrapeNav(user);
-    const crumbs     = scrapeCrumbs();
 
     applyTheme(getTheme());
 
@@ -1548,7 +1248,7 @@
     body.insertBefore(header, body.firstChild);
     injectNativeControls(header);
 
-    // Los bloques se rescatan antes de que killRemnants() oculte el drawer.
+    // Los bloques se rescatan antes de que el CSS oculte el drawer.
     if (isLoggedIn) body.appendChild(buildSheet(nav, user, collectBlocks()));
     wirePaletteShortcut(nav);
 
@@ -1562,27 +1262,15 @@
       body.appendChild(buildCategories(cats));
       body.appendChild(buildFooter(user));
     } else {
-      // Páginas internas: el HTML nativo de Moodle se conserva intacto
-      const crumbBar = buildCrumbs(crumbs);
-      if (crumbBar) body.insertBefore(crumbBar, header.nextSibling);
-
-      body.appendChild(buildFooter(user));
-      // No es sólo la vista de curso: los acordeones de categorías, la
-      // paginación y cualquier otro contenido que Moodle agregue después
-      // de este punto pueden dejar el footer encajado en el medio.
-      watchForLateContent();
-
-      if (body.classList.contains('pagelayout-course') || location.pathname.includes('/course/view.php')) {
-        body.classList.add('pagelayout-course');
-        redesignCourseView();
-      }
+      // v2: el HTML nativo de Moodle (con CSS de Boost) se conserva entero:
+      // sus migas de pan y su índice de curso ya funcionan, así que no se
+      // reconstruyen. Sólo se agrega el footer, DENTRO de #page.drawers
+      // porque en Boost ése es el contenedor que scrollea (body no).
+      (document.getElementById('page') || body).appendChild(buildFooter(user));
     }
 
     markMainLandmark();
     applyTheme(getTheme());
-    killRemnants();
-    setTimeout(killRemnants, 1500);
-    setTimeout(killRemnants, 3500);
 
     console.log(
       `%c UTN Redesign v5 %c ${isFrontPage ? 'frontpage' : 'inner'} · ${isLoggedIn ? 'logged in' : 'guest'} · ${nav.length} destinos `,

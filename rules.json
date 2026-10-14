@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "https://frcon.cvg.utn.edu.ar/theme/styles.php/boost/\\1"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://frcon\\.cvg\\.utn\\.edu\\.ar/theme/styles\\.php/adaptable/(.*)$",
+      "resourceTypes": ["stylesheet"]
+    }
+  }
+]
