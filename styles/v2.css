@@ -1921,3 +1921,11 @@ html body.pagelayout-login {
 
   #page-wrapper, #adaptable-page-header-wrapper, .logincontainer, footer { display: none; }
 }
+
+/* Móvil: el header no entra (menú + logo + búsqueda + 2 popovers + tema +
+   usuario). Medido a 390px: el menú de usuario quedaba fuera de pantalla.
+   Ctrl+K no aplica sin teclado, así que el botón de búsqueda se oculta. */
+@media (max-width: 480px) {
+  html #nhood-header .nh-cmdk { display: none; }
+  html #nhood-header .nh-inner { gap: 8px; }
+}
